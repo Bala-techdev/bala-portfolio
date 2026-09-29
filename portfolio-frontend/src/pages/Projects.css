@@ -1,0 +1,137 @@
+.pj {
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 40px 0;
+}
+
+.pj-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pj-title {
+  margin: 0;
+  font-size: clamp(32px, 3.2vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--pf-ink, #0f1115);
+}
+
+.pj-sub {
+  max-width: 560px;
+  margin: 8px 0 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--pf-muted, #6b7280);
+}
+
+.pj-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border: 1px solid var(--pf-line, #e6e9f0);
+  border-radius: 10px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: border-color 0.15s ease;
+}
+
+.pj-source svg {
+  width: 16px;
+  height: 16px;
+}
+
+.pj-source:hover {
+  border-color: #cdd3e0;
+}
+
+.pj-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 26px 0;
+}
+
+.pj-chip {
+  padding: 9px 18px;
+  border: 1px solid var(--pf-line, #e6e9f0);
+  border-radius: 999px;
+  background: #fff;
+  font: 500 13px/1 var(--pf-font, "Inter", sans-serif);
+  color: #4b5563;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.pj-chip:hover {
+  border-color: #cdd3e0;
+}
+
+.pj-chip[aria-pressed="true"] {
+  border-color: var(--pf-ink, #0f1115);
+  background: var(--pf-ink, #0f1115);
+  color: #fff;
+}
+
+.pj-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.pj-empty {
+  padding: 48px 0;
+  text-align: center;
+  color: var(--pf-muted, #6b7280);
+}
+
+.pj-pager {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.pj-page-btn {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--pf-line, #e6e9f0);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--pf-ink, #0f1115);
+  cursor: pointer;
+}
+
+.pj-page-btn:hover:not(:disabled) {
+  border-color: #cdd3e0;
+}
+
+.pj-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1024px) {
+  .pj-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .pj-top {
+    flex-direction: column;
+  }
+
+  .pj-grid {
+    grid-template-columns: 1fr;
+  }
+}

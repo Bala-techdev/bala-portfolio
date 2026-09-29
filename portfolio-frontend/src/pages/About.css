@@ -1,0 +1,236 @@
+.ab {
+  flex: 1;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 44px 0 40px;
+}
+
+.ab-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  column-gap: 0;
+  row-gap: 0;
+}
+
+/* ---------- Heading ---------- */
+.ab-head {
+  grid-column: 1;
+  grid-row: 1;
+  padding-right: 32px;
+}
+
+.ab-title {
+  margin: 0;
+  font-size: clamp(34px, 3.4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--pf-ink, #0f1115);
+}
+
+.ab-sub {
+  margin: 8px 0 0;
+  font-size: 15px;
+  color: var(--pf-muted, #6b7280);
+}
+
+.ab-text {
+  max-width: 520px;
+  margin: 22px 0 28px;
+  font-size: 15px;
+  line-height: 1.75;
+  color: #4b5563;
+}
+
+/* ---------- Photo card ---------- */
+.ab-photo {
+  position: relative;
+  display: flex;
+  grid-column: 2;
+  grid-row: 1 / 3;
+  margin-top: 34px;
+}
+
+.ab-frame {
+  flex: 1;
+  min-height: 340px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: linear-gradient(160deg, #dfe6f2 0%, #b4c2da 55%, #8fa1bd 100%);
+  box-shadow: 0 14px 36px rgba(20, 30, 60, 0.14);
+}
+
+.ab-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.ab-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  color: #4d5d80;
+  text-align: center;
+}
+
+.ab-slot svg {
+  width: 34px;
+  height: 34px;
+}
+
+.ab-slot strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ab-slot small {
+  font-size: 12px;
+}
+
+.ab-badge {
+  position: absolute;
+  top: 22%;
+  left: -44px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 10px 26px rgba(28, 40, 90, 0.16);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--pf-accent, #3d5afe);
+}
+
+/* ---------- Info cards ---------- */
+.ab-cards {
+  position: relative;
+  z-index: 2;
+  grid-column: 1 / -1;
+  grid-row: 2;
+  align-self: end;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0 60px 0 0;
+}
+
+.ab-card {
+  padding: 16px 18px;
+  border: 1px solid var(--pf-line, #e6e9f0);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(28, 40, 90, 0.06);
+}
+
+.ab-card dt {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: var(--pf-muted, #6b7280);
+}
+
+.ab-card dd {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--pf-ink, #0f1115);
+}
+
+/* ---------- Quote banner ---------- */
+.ab-banner {
+  position: relative;
+  grid-column: 1 / -1;
+  grid-row: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 170px;
+  margin: 22px 0 0;
+  padding: 0 40px;
+  overflow: hidden;
+  border-radius: 16px;
+  background-color: #12151c;
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+}
+
+.ab-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(10, 12, 18, 0.88) 0%, rgba(10, 12, 18, 0.5) 55%, rgba(10, 12, 18, 0.15) 100%);
+}
+
+.ab-quote,
+.ab-author {
+  position: relative;
+}
+
+.ab-quote {
+  margin: 0;
+  font-family: var(--pf-hand, "Caveat", cursive);
+  font-size: clamp(28px, 3vw, 38px);
+  line-height: 1.2;
+}
+
+.ab-author {
+  margin-top: 14px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1024px) {
+  .ab-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ab-head,
+  .ab-photo,
+  .ab-cards,
+  .ab-banner {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .ab-head {
+    padding-right: 0;
+  }
+
+  .ab-photo {
+    width: 100%;
+    max-width: 420px;
+    height: 420px;
+    margin: 0 0 24px;
+  }
+
+  .ab-badge {
+    top: 16px;
+    left: 16px;
+  }
+
+  .ab-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .ab-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .ab-banner {
+    padding: 0 24px;
+  }
+}
