@@ -1,0 +1,384 @@
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m---------------------< [0;36mcom.balatechdev:portfolio[0;1m >----------------------[m
+[[1;34mINFO[m] [1mBuilding portfolio 0.0.1-SNAPSHOT[m
+[[1;34mINFO[m]   from pom.xml
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mclean:3.4.1:clean[m [1m(default-clean)[m @ [36mportfolio[0;1m ---[m
+[[1;34mINFO[m] Deleting /home/balatechdev/Projects/bala-portfolio/portfolio-backend/target
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mjacoco:0.8.12:prepare-agent[m [1m(default)[m @ [36mportfolio[0;1m ---[m
+[[1;34mINFO[m] argLine set to -javaagent:/home/balatechdev/.m2/repository/org/jacoco/org.jacoco.agent/0.8.12/org.jacoco.agent-0.8.12-runtime.jar=destfile=/home/balatechdev/Projects/bala-portfolio/portfolio-backend/target/jacoco.exec
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mresources:3.3.1:resources[m [1m(default-resources)[m @ [36mportfolio[0;1m ---[m
+[[1;34mINFO[m] Copying 5 resources from src/main/resources to target/classes
+[[1;34mINFO[m] Copying 8 resources from src/main/resources to target/classes
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mcompiler:3.13.0:compile[m [1m(default-compile)[m @ [36mportfolio[0;1m ---[m
+[[1;34mINFO[m] Recompiling the module because of [1mchanged source code[m.
+[[1;34mINFO[m] Compiling 89 source files with javac [debug parameters release 21] to target/classes
+[[1;34mINFO[m] Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+[[1;34mINFO[m] -------------------------------------------------------------
+[[1;31mERROR[m] COMPILATION ERROR : 
+[[1;34mINFO[m] -------------------------------------------------------------
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[3,35] package org.assertj.core.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[3,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[4,35] package org.assertj.core.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[4,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[6,43] package com.bala.portfolio.common.exception does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[7,29] package org.junit.jupiter.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[3,27] package org.hamcrest does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[3,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[4,26] package org.mockito does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[4,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[5,26] package org.mockito does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[5,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[6,59] package org.springframework.test.web.servlet.request does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[6,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[7,58] package org.springframework.test.web.servlet.result does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[7,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[8,58] package org.springframework.test.web.servlet.result does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[8,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[14,29] package org.junit.jupiter.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[16,63] package org.springframework.boot.test.autoconfigure.web.servlet does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[17,40] package org.springframework.test.context does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[18,62] package org.springframework.test.context.bean.override.mockito does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[19,44] package org.springframework.test.web.servlet does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[21,2] cannot find symbol
+  symbol: class WebMvcTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[22,2] cannot find symbol
+  symbol: class ActiveProfiles
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[26,13] cannot find symbol
+  symbol:   class MockMvc
+  location: class com.balatechdev.portfolio.education.EducationControllerTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[3,35] package org.assertj.core.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[3,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[4,35] package org.assertj.core.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[4,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[5,26] package org.mockito does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[5,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[6,26] package org.mockito does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[6,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[7,26] package org.mockito does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[7,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[8,57] cannot find symbol
+  symbol:   class ConditionalAuthorizationManager
+  location: package org.springframework.security.authorization
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[8,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[15,29] package org.junit.jupiter.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[16,29] package org.junit.jupiter.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[17,39] package org.junit.jupiter.api.extension does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[18,19] package org.mockito does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[19,19] package org.mockito does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[20,33] package org.mockito.junit.jupiter does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[22,2] cannot find symbol
+  symbol: class ExtendWith
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[3,35] package org.assertj.core.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[3,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[4,35] package org.assertj.core.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[4,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[10,29] package org.junit.jupiter.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[12,45] package org.springframework.boot.test.context does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[13,40] package org.springframework.test.context does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[16,2] cannot find symbol
+  symbol: class SpringBootTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[17,2] cannot find symbol
+  symbol: class ActiveProfiles
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[3,59] package org.springframework.test.web.servlet.request does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[3,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[4,59] package org.springframework.test.web.servlet.request does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[4,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[5,58] package org.springframework.test.web.servlet.result does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[5,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[11,29] package org.junit.jupiter.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[12,29] package org.junit.jupiter.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[13,32] package org.junit.jupiter.params does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[14,41] package org.junit.jupiter.params.provider does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[16,63] package org.springframework.boot.test.autoconfigure.web.servlet does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[17,45] package org.springframework.boot.test.context does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[24,40] package org.springframework.test.context does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[25,44] package org.springframework.test.web.servlet does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[27,2] cannot find symbol
+  symbol: class SpringBootTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[28,2] cannot find symbol
+  symbol: class AutoConfigureMockMvc
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[29,2] cannot find symbol
+  symbol: class ActiveProfiles
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[33,13] cannot find symbol
+  symbol:   class MockMvc
+  location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[11,6] cannot find symbol
+  symbol:   class Test
+  location: class com.balatechdev.portfolio.contact.ContactRateLimiterTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[21,6] cannot find symbol
+  symbol:   class Test
+  location: class com.balatechdev.portfolio.contact.ContactRateLimiterTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[34,6] cannot find symbol
+  symbol:   class Test
+  location: class com.balatechdev.portfolio.contact.ContactRateLimiterTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[28,6] cannot find symbol
+  symbol:   class MockitoBean
+  location: class com.balatechdev.portfolio.education.EducationControllerTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[31,6] cannot find symbol
+  symbol:   class Test
+  location: class com.balatechdev.portfolio.education.EducationControllerTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[43,6] cannot find symbol
+  symbol:   class Test
+  location: class com.balatechdev.portfolio.education.EducationControllerTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[22,13] cannot find symbol
+  symbol: class MockitoExtension
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[25,6] cannot find symbol
+  symbol:   class Mock
+  location: class com.balatechdev.portfolio.education.EducationServiceTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[28,6] cannot find symbol
+  symbol:   class InjectMocks
+  location: class com.balatechdev.portfolio.education.EducationServiceTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[33,6] cannot find symbol
+  symbol:   class BeforeEach
+  location: class com.balatechdev.portfolio.education.EducationServiceTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[38,6] cannot find symbol
+  symbol:   class Test
+  location: class com.balatechdev.portfolio.education.EducationServiceTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[48,6] cannot find symbol
+  symbol:   class Test
+  location: class com.balatechdev.portfolio.education.EducationServiceTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[57,6] cannot find symbol
+  symbol:   class Test
+  location: class com.balatechdev.portfolio.education.EducationServiceTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[68,6] cannot find symbol
+  symbol:   class Test
+  location: class com.balatechdev.portfolio.education.EducationServiceTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[24,6] cannot find symbol
+  symbol:   class Test
+  location: class com.balatechdev.portfolio.project.ProjectServiceIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[31,6] cannot find symbol
+  symbol:   class Test
+  location: class com.balatechdev.portfolio.project.ProjectServiceIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[39,6] cannot find symbol
+  symbol:   class Test
+  location: class com.balatechdev.portfolio.project.ProjectServiceIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[49,6] cannot find symbol
+  symbol:   class Test
+  location: class com.balatechdev.portfolio.project.ProjectServiceIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[43,6] cannot find symbol
+  symbol:   class BeforeEach
+  location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[67,6] cannot find symbol
+  symbol:   class ParameterizedTest
+  location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[68,6] cannot find symbol
+  symbol:   class MethodSource
+  location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[79,6] cannot find symbol
+  symbol:   class ParameterizedTest
+  location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[80,6] cannot find symbol
+  symbol:   class MethodSource
+  location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[85,6] cannot find symbol
+  symbol:   class ParameterizedTest
+  location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[86,6] cannot find symbol
+  symbol:   class MethodSource
+  location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[92,6] cannot find symbol
+  symbol:   class ParameterizedTest
+  location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[93,6] cannot find symbol
+  symbol:   class MethodSource
+  location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[99,6] cannot find symbol
+  symbol:   class Test
+  location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;34mINFO[m] 100 errors 
+[[1;34mINFO[m] -------------------------------------------------------------
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;31mBUILD FAILURE[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  4.278 s
+[[1;34mINFO[m] Finished at: 2026-10-01T07:36:59+05:30
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;31mERROR[m] Failed to execute goal [32morg.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile[m [1m(default-compile)[m on project [36mportfolio[m: [1;31mCompilation failure[m: Compilation failure: 
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[3,35] package org.assertj.core.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[3,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[4,35] package org.assertj.core.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[4,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[6,43] package com.bala.portfolio.common.exception does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[7,29] package org.junit.jupiter.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[3,27] package org.hamcrest does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[3,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[4,26] package org.mockito does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[4,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[5,26] package org.mockito does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[5,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[6,59] package org.springframework.test.web.servlet.request does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[6,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[7,58] package org.springframework.test.web.servlet.result does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[7,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[8,58] package org.springframework.test.web.servlet.result does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[8,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[14,29] package org.junit.jupiter.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[16,63] package org.springframework.boot.test.autoconfigure.web.servlet does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[17,40] package org.springframework.test.context does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[18,62] package org.springframework.test.context.bean.override.mockito does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[19,44] package org.springframework.test.web.servlet does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[21,2] cannot find symbol
+[[1;31mERROR[m]   symbol: class WebMvcTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[22,2] cannot find symbol
+[[1;31mERROR[m]   symbol: class ActiveProfiles
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[26,13] cannot find symbol
+[[1;31mERROR[m]   symbol:   class MockMvc
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.education.EducationControllerTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[3,35] package org.assertj.core.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[3,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[4,35] package org.assertj.core.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[4,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[5,26] package org.mockito does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[5,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[6,26] package org.mockito does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[6,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[7,26] package org.mockito does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[7,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[8,57] cannot find symbol
+[[1;31mERROR[m]   symbol:   class ConditionalAuthorizationManager
+[[1;31mERROR[m]   location: package org.springframework.security.authorization
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[8,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[15,29] package org.junit.jupiter.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[16,29] package org.junit.jupiter.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[17,39] package org.junit.jupiter.api.extension does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[18,19] package org.mockito does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[19,19] package org.mockito does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[20,33] package org.mockito.junit.jupiter does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[22,2] cannot find symbol
+[[1;31mERROR[m]   symbol: class ExtendWith
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[3,35] package org.assertj.core.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[3,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[4,35] package org.assertj.core.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[4,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[10,29] package org.junit.jupiter.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[12,45] package org.springframework.boot.test.context does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[13,40] package org.springframework.test.context does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[16,2] cannot find symbol
+[[1;31mERROR[m]   symbol: class SpringBootTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[17,2] cannot find symbol
+[[1;31mERROR[m]   symbol: class ActiveProfiles
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[3,59] package org.springframework.test.web.servlet.request does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[3,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[4,59] package org.springframework.test.web.servlet.request does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[4,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[5,58] package org.springframework.test.web.servlet.result does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[5,1] static import only from classes and interfaces
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[11,29] package org.junit.jupiter.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[12,29] package org.junit.jupiter.api does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[13,32] package org.junit.jupiter.params does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[14,41] package org.junit.jupiter.params.provider does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[16,63] package org.springframework.boot.test.autoconfigure.web.servlet does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[17,45] package org.springframework.boot.test.context does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[24,40] package org.springframework.test.context does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[25,44] package org.springframework.test.web.servlet does not exist
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[27,2] cannot find symbol
+[[1;31mERROR[m]   symbol: class SpringBootTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[28,2] cannot find symbol
+[[1;31mERROR[m]   symbol: class AutoConfigureMockMvc
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[29,2] cannot find symbol
+[[1;31mERROR[m]   symbol: class ActiveProfiles
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[33,13] cannot find symbol
+[[1;31mERROR[m]   symbol:   class MockMvc
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[11,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class Test
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.contact.ContactRateLimiterTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[21,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class Test
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.contact.ContactRateLimiterTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/contact/ContactRateLimiterTest.java:[34,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class Test
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.contact.ContactRateLimiterTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[28,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class MockitoBean
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.education.EducationControllerTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[31,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class Test
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.education.EducationControllerTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationControllerTest.java:[43,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class Test
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.education.EducationControllerTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[22,13] cannot find symbol
+[[1;31mERROR[m]   symbol: class MockitoExtension
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[25,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class Mock
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.education.EducationServiceTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[28,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class InjectMocks
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.education.EducationServiceTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[33,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class BeforeEach
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.education.EducationServiceTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[38,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class Test
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.education.EducationServiceTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[48,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class Test
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.education.EducationServiceTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[57,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class Test
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.education.EducationServiceTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/education/EducationServiceTest.java:[68,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class Test
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.education.EducationServiceTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[24,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class Test
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.project.ProjectServiceIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[31,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class Test
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.project.ProjectServiceIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[39,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class Test
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.project.ProjectServiceIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/project/ProjectServiceIntegrationTest.java:[49,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class Test
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.project.ProjectServiceIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[43,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class BeforeEach
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[67,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class ParameterizedTest
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[68,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class MethodSource
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[79,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class ParameterizedTest
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[80,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class MethodSource
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[85,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class ParameterizedTest
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[86,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class MethodSource
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[92,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class ParameterizedTest
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[93,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class MethodSource
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] /home/balatechdev/Projects/bala-portfolio/portfolio-backend/src/main/java/com/balatechdev/portfolio/security/SecurityRulesIntegrationTest.java:[99,6] cannot find symbol
+[[1;31mERROR[m]   symbol:   class Test
+[[1;31mERROR[m]   location: class com.balatechdev.portfolio.security.SecurityRulesIntegrationTest
+[[1;31mERROR[m] -> [1m[Help 1][m
+[[1;31mERROR[m] 
+[[1;31mERROR[m] To see the full stack trace of the errors, re-run Maven with the [1m-e[m switch.
+[[1;31mERROR[m] Re-run Maven using the [1m-X[m switch to enable full debug logging.
+[[1;31mERROR[m] 
+[[1;31mERROR[m] For more information about the errors and possible solutions, please read the following articles:
+[[1;31mERROR[m] [1m[Help 1][m http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

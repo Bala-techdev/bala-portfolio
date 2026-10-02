@@ -65,7 +65,7 @@ public class SecurityConfig {
             PasswordEncoder passwordEncoder) {
 
         // Pass userDetailsService directly into the constructor
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider((PasswordEncoder) userDetailsService);
 
         // Set the password encoder using setter method
         provider.setPasswordEncoder(passwordEncoder);
