@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { apiUrl } from "../api/api";
 import { FiExternalLink } from "react-icons/fi";
 import "./Certificates.css";
 
@@ -32,7 +33,7 @@ export default function Certificates() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("/api/v1/certificates")
+    fetch(apiUrl("/api/v1/certificates"))
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error: ${res.status}`);

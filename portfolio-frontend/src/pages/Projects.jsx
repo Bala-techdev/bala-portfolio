@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { apiUrl } from "../api/api";
 import {
   FiArrowUpRight,
   FiChevronLeft,
@@ -26,7 +27,7 @@ export default function Projects({ onOpenProject }) {
         setLoading(true);
         setError("");
 
-        const response = await fetch("/api/v1/projects", {
+        const response = await fetch(apiUrl("/api/v1/projects"), {
           headers: {
             Accept: "application/json",
           },

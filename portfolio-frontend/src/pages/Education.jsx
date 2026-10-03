@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { apiUrl } from "../api/api";
 import "./Education.css";
 
 const PHOTO = "/education.jpg";
@@ -27,7 +28,7 @@ export default function Education() {
   const [photoOk, setPhotoOk] = useState(true);
 
   useEffect(() => {
-    fetch("/api/v1/education")
+    fetch(apiUrl("/api/v1/education"))
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error: ${res.status}`);

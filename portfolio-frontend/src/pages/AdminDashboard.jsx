@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
+import { apiUrl } from "../api/api";
 import "./AdminDashboard.css";
+const api = (path) => apiUrl(path);
 
 const EMPTY_PROJECT = {
   slug: "",
@@ -136,8 +138,7 @@ export default function AdminDashboard({ onLogout }) {
       setLoading(true);
       setError("");
 
-      const response = await fetch(
-        "/api/v1/admin/contact-messages",
+      const response = await fetch(api("/api/v1/admin/contact-messages"),
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -183,10 +184,10 @@ export default function AdminDashboard({ onLogout }) {
         skillsResponse,
         certificatesResponse,
       ] = await Promise.all([
-        fetch("/api/v1/projects"),
-        fetch("/api/v1/blog"),
-        fetch("/api/v1/skills"),
-        fetch("/api/v1/certificates"),
+        fetch(api("/api/v1/projects")),
+        fetch(api("/api/v1/blog")),
+        fetch(api("/api/v1/skills")),
+        fetch(api("/api/v1/certificates")),
       ]);
 
       if (
@@ -252,9 +253,7 @@ export default function AdminDashboard({ onLogout }) {
     try {
       setProjectsLoading(true);
 
-      const response = await fetch(
-        "/api/v1/projects"
-      );
+      const response = await fetch(api("/api/v1/projects"));
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
@@ -286,8 +285,7 @@ export default function AdminDashboard({ onLogout }) {
     try {
       setBlogLoading(true);
 
-      const response = await fetch(
-        "/api/v1/admin/blog?page=0&size=50",
+      const response = await fetch(api("/api/v1/admin/blog?page=0&size=50"),
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -328,7 +326,7 @@ export default function AdminDashboard({ onLogout }) {
     try {
       setEducationLoading(true);
 
-      const response = await fetch("/api/v1/education");
+      const response = await fetch(api("/api/v1/education"));
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
@@ -351,7 +349,7 @@ export default function AdminDashboard({ onLogout }) {
     try {
       setExperienceLoading(true);
 
-      const response = await fetch("/api/v1/experience");
+      const response = await fetch(api("/api/v1/experience"));
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
@@ -368,13 +366,13 @@ export default function AdminDashboard({ onLogout }) {
   }, []);
 
   const fetchSkills = useCallback(async () => {
-    try { setSkillsLoading(true); const r = await fetch("/api/v1/skills"); if (!r.ok) throw new Error(`HTTP ${r.status}`); const d = await r.json(); setSkillGroups(Array.isArray(d) ? d : []); }
+    try { setSkillsLoading(true); const r = await fetch(api("/api/v1/skills")); if (!r.ok) throw new Error(`HTTP ${r.status}`); const d = await r.json(); setSkillGroups(Array.isArray(d) ? d : []); }
     catch (e) { console.error("Failed to load skills:", e); setSkillGroups([]); }
     finally { setSkillsLoading(false); }
   }, []);
 
   const fetchCertificates = useCallback(async () => {
-    try { setCertificatesLoading(true); const r = await fetch("/api/v1/certificates"); if (!r.ok) throw new Error(`HTTP ${r.status}`); const d = await r.json(); setCertificates(Array.isArray(d) ? d : []); }
+    try { setCertificatesLoading(true); const r = await fetch(api("/api/v1/certificates")); if (!r.ok) throw new Error(`HTTP ${r.status}`); const d = await r.json(); setCertificates(Array.isArray(d) ? d : []); }
     catch (e) { console.error("Failed to load certificates:", e); setCertificates([]); }
     finally { setCertificatesLoading(false); }
   }, []);
@@ -512,8 +510,8 @@ export default function AdminDashboard({ onLogout }) {
 
     try {
       const url = editingProject
-        ? `/api/v1/admin/projects/${editingProject.id}`
-        : "/api/v1/admin/projects";
+  ? api(`/api/v1/admin/projects/${editingProject.id}`)
+  : api("/api/v1/admin/projects");
 
       const method = editingProject ? "PUT" : "POST";
 
@@ -571,7 +569,7 @@ export default function AdminDashboard({ onLogout }) {
     }
 
     try {
-      const response = await fetch(`/api/v1/admin/projects/${id}`, {
+      const response = await fetch(api(`/api/v1/admin/projects/${id}`), {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -622,7 +620,7 @@ export default function AdminDashboard({ onLogout }) {
     }
 
     try {
-      const response = await fetch(`/api/v1/admin/blog/${post.id}`, {
+      const response = await fetch(api(`/api/v1/admin/blog/${post.id}`), {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
@@ -704,8 +702,8 @@ export default function AdminDashboard({ onLogout }) {
 
     try {
       const url = editingBlogPost
-        ? `/api/v1/admin/blog/${editingBlogPost.id}`
-        : "/api/v1/admin/blog";
+  ? api(`/api/v1/admin/blog/${editingBlogPost.id}`)
+  : api("/api/v1/admin/blog");
 
       const method = editingBlogPost ? "PUT" : "POST";
 
@@ -759,7 +757,7 @@ export default function AdminDashboard({ onLogout }) {
     }
 
     try {
-      const response = await fetch(`/api/v1/admin/blog/${id}`, {
+      const response = await fetch(api(`/api/v1/admin/blog/${id}`), {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -795,8 +793,7 @@ export default function AdminDashboard({ onLogout }) {
     }
 
     try {
-      const response = await fetch(
-        `/api/v1/admin/contact-messages/${id}/read`,
+      const response = await fetch(api(`/api/v1/admin/contact-messages/${id}/read`),
         {
           method: "PATCH",
           headers: {
@@ -861,8 +858,7 @@ export default function AdminDashboard({ onLogout }) {
     }
 
     try {
-      const response = await fetch(
-        `/api/v1/admin/contact-messages/${id}`,
+      const response = await fetch(api(`/api/v1/admin/contact-messages/${id}`),
         {
           method: "DELETE",
           headers: {
@@ -955,8 +951,8 @@ export default function AdminDashboard({ onLogout }) {
 
     try {
       const url = editingEducation
-        ? `/api/v1/admin/education/${editingEducation.id}`
-        : "/api/v1/admin/education";
+  ? api(`/api/v1/admin/education/${editingEducation.id}`)
+  : api("/api/v1/admin/education");
 
       const method = editingEducation ? "PUT" : "POST";
 
@@ -1008,7 +1004,7 @@ export default function AdminDashboard({ onLogout }) {
     }
 
     try {
-      const response = await fetch(`/api/v1/admin/education/${id}`, {
+      const response = await fetch(api(`/api/v1/admin/education/${id}`), {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -1105,9 +1101,9 @@ export default function AdminDashboard({ onLogout }) {
     };
 
     try {
-      const url = editingExperience
-        ? `/api/v1/admin/experience/${editingExperience.id}`
-        : "/api/v1/admin/experience";
+     const url = editingExperience
+  ? api(`/api/v1/admin/experience/${editingExperience.id}`)
+  : api("/api/v1/admin/experience");
 
       const method = editingExperience ? "PUT" : "POST";
 
@@ -1159,7 +1155,7 @@ export default function AdminDashboard({ onLogout }) {
     }
 
     try {
-      const response = await fetch(`/api/v1/admin/experience/${id}`, {
+      const response = await fetch(api(`/api/v1/admin/experience/${id}`), {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -1191,9 +1187,9 @@ export default function AdminDashboard({ onLogout }) {
   const handleSkillGroupChange = (e) => { const {name,value}=e.target; setSkillGroupForm(c=>({...c,[name]:value})); };
   const saveSkillGroup = async (e) => {
     e.preventDefault(); const token=localStorage.getItem("admin_token"); if(!token){handleUnauthorized();return;} setSkillGroupSaving(true); setSkillGroupError("");
-    try { const r=await fetch(editingSkillGroup?`/api/v1/admin/skill-groups/${editingSkillGroup.id}`:"/api/v1/admin/skill-groups",{method:editingSkillGroup?"PUT":"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({title:skillGroupForm.title.trim(),span:Number(skillGroupForm.span)||1,displayOrder:Number(skillGroupForm.displayOrder)||0})}); if(r.status===401||r.status===403){handleUnauthorized();return;} const d=await r.json().catch(()=>({})); if(!r.ok)throw new Error(d?.message||d?.error||"Unable to save skill group."); await fetchSkills(); closeSkillGroupForm(); } catch(e){console.error(e);setSkillGroupError(e.message||"Unable to save skill group.");} finally{setSkillGroupSaving(false);}
+    try { const r=await fetch(editingSkillGroup?api(`/api/v1/admin/skill-groups/${editingSkillGroup.id}`):api("/api/v1/admin/skill-groups"),{method:editingSkillGroup?"PUT":"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({title:skillGroupForm.title.trim(),span:Number(skillGroupForm.span)||1,displayOrder:Number(skillGroupForm.displayOrder)||0})}); if(r.status===401||r.status===403){handleUnauthorized();return;} const d=await r.json().catch(()=>({})); if(!r.ok)throw new Error(d?.message||d?.error||"Unable to save skill group."); await fetchSkills(); closeSkillGroupForm(); } catch(e){console.error(e);setSkillGroupError(e.message||"Unable to save skill group.");} finally{setSkillGroupSaving(false);}
   };
-  const deleteSkillGroup = async (id) => { if(!window.confirm("Deleting this skill group will also delete its skills. Continue?"))return; const token=localStorage.getItem("admin_token"); if(!token){handleUnauthorized();return;} try{const r=await fetch(`/api/v1/admin/skill-groups/${id}`,{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchSkills();await fetchDashboardStats();}catch(e){console.error(e);alert("Unable to delete skill group.");} };
+  const deleteSkillGroup = async (id) => { if(!window.confirm("Deleting this skill group will also delete its skills. Continue?"))return; const token=localStorage.getItem("admin_token"); if(!token){handleUnauthorized();return;} try{const r=await fetch(api(`/api/v1/admin/skill-groups/${id}`),{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchSkills();await fetchDashboardStats();}catch(e){console.error(e);alert("Unable to delete skill group.");} };
 
   const openCreateSkill = (groupId) => { setEditingSkill(null); setEditingSkillGroupId(groupId); setSkillForm(EMPTY_SKILL); setSkillError(""); setShowSkillForm(true); };
   const openEditSkill = (skill,groupId) => { setEditingSkill(skill); setEditingSkillGroupId(groupId); setSkillForm({name:skill.name||"",icon:skill.icon||"",abbr:skill.abbr||"",displayOrder:skill.displayOrder??0}); setSkillError(""); setShowSkillForm(true); };
@@ -1201,9 +1197,9 @@ export default function AdminDashboard({ onLogout }) {
   const handleSkillChange = (e) => { const {name,value}=e.target; setSkillForm(c=>({...c,[name]:value})); };
   const saveSkill = async (e) => {
     e.preventDefault(); const token=localStorage.getItem("admin_token"); if(!token){handleUnauthorized();return;} setSkillSaving(true);setSkillError("");
-    try { const r=await fetch(editingSkill?`/api/v1/admin/skills/${editingSkill.id}`:`/api/v1/admin/skill-groups/${editingSkillGroupId}/skills`,{method:editingSkill?"PUT":"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({name:skillForm.name.trim(),icon:skillForm.icon.trim()||null,abbr:skillForm.abbr.trim()||null,displayOrder:Number(skillForm.displayOrder)||0})});if(r.status===401||r.status===403){handleUnauthorized();return;}const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d?.message||d?.error||"Unable to save skill.");await fetchSkills();await fetchDashboardStats();closeSkillForm();}catch(e){console.error(e);setSkillError(e.message||"Unable to save skill.");}finally{setSkillSaving(false);}
+    try { const r=await fetch(editingSkill?api(`/api/v1/admin/skills/${editingSkill.id}`):api(`/api/v1/admin/skill-groups/${editingSkillGroupId}/skills`),{method:editingSkill?"PUT":"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({name:skillForm.name.trim(),icon:skillForm.icon.trim()||null,abbr:skillForm.abbr.trim()||null,displayOrder:Number(skillForm.displayOrder)||0})});if(r.status===401||r.status===403){handleUnauthorized();return;}const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d?.message||d?.error||"Unable to save skill.");await fetchSkills();await fetchDashboardStats();closeSkillForm();}catch(e){console.error(e);setSkillError(e.message||"Unable to save skill.");}finally{setSkillSaving(false);}
   };
-  const deleteSkill = async (id) => { if(!window.confirm("Are you sure you want to delete this skill?"))return;const token=localStorage.getItem("admin_token");if(!token){handleUnauthorized();return;}try{const r=await fetch(`/api/v1/admin/skills/${id}`,{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchSkills();await fetchDashboardStats();}catch(e){console.error(e);alert("Unable to delete skill.");} };
+  const deleteSkill = async (id) => { if(!window.confirm("Are you sure you want to delete this skill?"))return;const token=localStorage.getItem("admin_token");if(!token){handleUnauthorized();return;}try{const r=await fetch(api(`/api/v1/admin/skills/${id}`),{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchSkills();await fetchDashboardStats();}catch(e){console.error(e);alert("Unable to delete skill.");} };
 
   // =========================
   // Certificates CRUD
@@ -1214,9 +1210,9 @@ export default function AdminDashboard({ onLogout }) {
   const handleCertificateChange = (e) => { const {name,value}=e.target;setCertificateForm(c=>({...c,[name]:value})); };
   const saveCertificate = async (e) => {
     e.preventDefault();const token=localStorage.getItem("admin_token");if(!token){handleUnauthorized();return;}setCertificateSaving(true);setCertificateError("");
-    try{const r=await fetch(editingCertificate?`/api/v1/admin/certificates/${editingCertificate.id}`:"/api/v1/admin/certificates",{method:editingCertificate?"PUT":"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({title:certificateForm.title.trim(),issuer:certificateForm.issuer.trim(),url:certificateForm.url.trim(),logoUrl:certificateForm.logoUrl.trim()||null,abbr:certificateForm.abbr.trim()||null,bgColor:certificateForm.bgColor.trim()||null,fgColor:certificateForm.fgColor.trim()||null,displayOrder:Number(certificateForm.displayOrder)||0})});if(r.status===401||r.status===403){handleUnauthorized();return;}const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d?.message||d?.error||"Unable to save certificate.");await fetchCertificates();closeCertificateForm();}catch(e){console.error(e);setCertificateError(e.message||"Unable to save certificate.");}finally{setCertificateSaving(false);}
+    try{const r=await fetch(editingCertificate?api(`/api/v1/admin/certificates/${editingCertificate.id}`):api("/api/v1/admin/certificates"),{method:editingCertificate?"PUT":"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({title:certificateForm.title.trim(),issuer:certificateForm.issuer.trim(),url:certificateForm.url.trim(),logoUrl:certificateForm.logoUrl.trim()||null,abbr:certificateForm.abbr.trim()||null,bgColor:certificateForm.bgColor.trim()||null,fgColor:certificateForm.fgColor.trim()||null,displayOrder:Number(certificateForm.displayOrder)||0})});if(r.status===401||r.status===403){handleUnauthorized();return;}const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d?.message||d?.error||"Unable to save certificate.");await fetchCertificates();closeCertificateForm();}catch(e){console.error(e);setCertificateError(e.message||"Unable to save certificate.");}finally{setCertificateSaving(false);}
   };
-  const deleteCertificate = async (id) => {if(!window.confirm("Are you sure you want to delete this certificate?"))return;const token=localStorage.getItem("admin_token");if(!token){handleUnauthorized();return;}try{const r=await fetch(`/api/v1/admin/certificates/${id}`,{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchCertificates();}catch(e){console.error(e);alert("Unable to delete certificate.");}};
+  const deleteCertificate = async (id) => {if(!window.confirm("Are you sure you want to delete this certificate?"))return;const token=localStorage.getItem("admin_token");if(!token){handleUnauthorized();return;}try{const r=await fetch(api(`/api/v1/admin/certificates/${id}`),{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchCertificates();}catch(e){console.error(e);alert("Unable to delete certificate.");}};
 
   // =========================
   // Logout

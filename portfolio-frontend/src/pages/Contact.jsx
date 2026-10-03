@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiUrl } from "../api/api";
 import {
   FiMail,
   FiPhone,
@@ -67,7 +68,7 @@ export default function Contact() {
   setStatus("sending");
 
   try {
-    const res = await fetch("/api/v1/contact", {
+    const res = await fetch(apiUrl("/api/v1/contact"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

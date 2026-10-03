@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { apiUrl } from "../api/api";
 import { FiArrowRight } from "react-icons/fi";
 import ProjectImage from "../components/ProjectImage";
 import "./Blog.css";
@@ -11,7 +12,7 @@ export default function Blog({ onOpenPost }) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("/api/v1/blog")
+    fetch(apiUrl("/api/v1/blog"))
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error: ${res.status}`);

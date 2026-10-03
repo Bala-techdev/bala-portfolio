@@ -1,4 +1,4 @@
-
+import { apiUrl } from "../api/api";
 import { useEffect, useState } from "react";
 import {
   FiDownload,
@@ -95,7 +95,7 @@ export default function Skills() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("/api/v1/skills")
+    fetch(apiUrl("/api/v1/skills"))
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error: ${res.status}`);

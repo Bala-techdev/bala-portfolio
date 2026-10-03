@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { apiUrl } from "../api/api";
 import {
   FiArrowLeft,
   FiCheck,
@@ -92,7 +93,7 @@ export default function ProjectDetail({ id, onBack }) {
 
         // Get all projects from backend
         const response = await fetch(
-          "/api/v1/projects",
+  apiUrl("/api/v1/projects"),
           {
             headers: {
               Accept: "application/json",
