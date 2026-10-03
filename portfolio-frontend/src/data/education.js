@@ -3,7 +3,7 @@
 export const education = [
   {
     id: "be-cse",
-    period: "2021 – 2025",
+    period: "2024 – 2028",
     title: "B.E Computer Science and Engineering",
     school: "Dhanalakshmi Srinivasan College of Engineering",
     score: "CGPA: 7.8 (till now)",
@@ -12,18 +12,18 @@ export const education = [
   },
   {
     id: "hsc",
-    period: "2020 – 2021",
+    period: "2022 – 2024",
     title: "Higher Secondary (12th)",
-    school: "Sri Ramakrishna Matric Higher Secondary School",
-    score: "84%",
+    school: "Goverment Higher Secondary School",
+    score: "86%",
     logo: "/logos/school.png",
     initials: "SR",
   },
   {
     id: "sslc",
-    period: "2018 – 2019",
+    period: "2021 – 2022",
     title: "SSLC (10th)",
-    school: "Sri Ramakrishna Matric Higher Secondary School",
+    school: "Goverment Higher Secondary School",
     score: "88%",
     logo: "/logos/school.png",
     initials: "SR",

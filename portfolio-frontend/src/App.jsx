@@ -13,6 +13,8 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
 import "./App.css";
 import "./style.css";
 
@@ -59,7 +61,37 @@ export default function App() {
 
   const { section, id } = route;
 
-  let content;
+if (section === "admin" && !id) {
+  const token = localStorage.getItem("admin_token");
+
+  window.location.hash = token
+    ? "/admin/dashboard"
+    : "/admin/login";
+
+  return null;
+}
+
+if (section === "admin" && id === "login") {
+  return (
+    <AdminLogin
+      onLogin={() => {
+        window.location.hash = "/admin/dashboard";
+      }}
+    />
+  );
+}
+
+if (section === "admin" && id === "dashboard") {
+  return (
+    <AdminDashboard
+      onLogout={() => {
+        window.location.hash = "/admin/login";
+      }}
+    />
+  );
+}
+
+let content;
   if (section === "projects" && id) {
     content = <ProjectDetail id={id} onBack={() => navigate("projects")} />;
   } else if (section === "projects") {

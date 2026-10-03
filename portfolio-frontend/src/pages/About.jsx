@@ -1,34 +1,4 @@
-// import SectionHeading from "../components/SectionHeading";
-// import { profile } from "../data/profile";
 
-// export default function About() {
-//   return (
-//     <section className="section content-section about">
-//       <div>
-//         <SectionHeading title="About Me" eyebrow="Get to know more about me">
-//           <p>{profile.about}</p>
-//         </SectionHeading>
-
-//         <div className="info-grid">
-//           {profile.details.map(([label, value]) => (
-//             <span key={label}>
-//               <small>{label}</small>
-//               {value}
-//             </span>
-//           ))}
-//         </div>
-//       </div>
-
-//       <div className="about-art">
-//         <div className="figure-small">B</div>
-//         <div className="quote-card">
-//           “ Small Steps, Big Dreams. ”
-//           <small>— Bala S</small>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
 
 
 import { useState } from "react";
@@ -39,7 +9,7 @@ import "./About.css";
 const TITLE = "About Me";
 const SUBTITLE = "Get to know more about me";
 const PARAGRAPH =
-  "I'm Bala S, a Computer Science and Engineering student passionate about full-stack development, AI/ML, and building products that solve real-world problems. I enjoy learning new technologies, working on challenging projects, and constantly improving my problem-solving skills.";
+  "I’m Bala S, a Computer Science Engineering student and aspiring Full Stack Java Developer. I enjoy building practical web applications and solving real-world problems through technology.I work with Java, Spring Boot, React, MySQL, and REST APIs, and I’m continuously improving my skills in Data Structures & Algorithms, AI/ML, and software development.I believe in learning by building. I enjoy turning ideas into useful applications, exploring new technologies, and improving my problem-solving skills every day.";
 
 const INFO = [
   { label: "Name", value: "Bala S" },
@@ -53,7 +23,7 @@ const INFO = [
 const QUOTE = "Small Steps, Big Dreams.";
 const AUTHOR = "Bala S";
 
-const PHOTO = "/about.jpg"; // put your photo in the "public" folder
+const PHOTO = "/profile.png"; // put your photo in the "public" folder
 const BANNER = "/about-banner.jpg"; // optional banner image in "public"
 
 export default function About() {

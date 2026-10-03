@@ -1,4 +1,13 @@
-import { FiDownload, FiGlobe, FiKey, FiShield, FiTerminal } from "react-icons/fi";
+
+import { useEffect, useState } from "react";
+import {
+  FiDownload,
+  FiGlobe,
+  FiKey,
+  FiShield,
+  FiTerminal,
+} from "react-icons/fi";
+
 import {
   FaJava,
   FaReact,
@@ -9,6 +18,7 @@ import {
   FaGithub,
   FaDocker,
 } from "react-icons/fa";
+
 import {
   SiJavascript,
   SiTypescript,
@@ -20,15 +30,17 @@ import {
   SiRedis,
   SiPostman,
 } from "react-icons/si";
+
 import { VscVscode } from "react-icons/vsc";
-import { skillGroups } from "../data/skills";
+
 import "./Skills.css";
 
-const PDF = "/skills.pdf"; // put your skills PDF in the "public" folder
-const PANEL_IMAGE = "/skills.jpg"; // optional background image in "public"
-const QUOTE = "A combination of technologies I work with to turn ideas into reality.";
+const PDF = "/skills.pdf";
+const PANEL_IMAGE = "/skills.jpg";
+const QUOTE =
+  "A combination of technologies I work with to turn ideas into reality.";
 
-// Icon + brand color for each "icon" key used in data/skills.js
+// Icon + brand color for each "icon" key returned by the backend
 const ICONS = {
   java: { icon: FaJava, color: "#ea2d2e" },
   javascript: { icon: SiJavascript, color: "#e8b900" },
@@ -61,45 +73,97 @@ function Skill({ name, icon, abbr }) {
     <li className="sk-item">
       <span className="sk-tile">
         {Icon ? (
-          <Icon aria-hidden="true" style={{ color: found.color }} />
+          <Icon
+            aria-hidden="true"
+            style={{ color: found.color }}
+          />
         ) : (
           <b className="sk-abbr" aria-hidden="true">
             {abbr || name.slice(0, 2)}
           </b>
         )}
       </span>
+
       <span className="sk-name">{name}</span>
     </li>
   );
 }
 
 export default function Skills() {
+  const [skillGroups, setSkillGroups] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetch("/api/v1/skills")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error: ${res.status}`);
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        setSkillGroups(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to load skills:", err);
+        setError("Unable to load skills.");
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <section className="sk">
       <div className="sk-grid">
         {/* ---------- Left: heading + skill groups ---------- */}
         <div className="sk-main">
           <h1 className="sk-title">Skills</h1>
-          <p className="sk-sub">Technologies I work with to build amazing products.</p>
+
+          <p className="sk-sub">
+            Technologies I work with to build amazing products.
+          </p>
 
           <div className="sk-groups">
-            {skillGroups.map((group) => (
-              <section className="sk-group" key={group.title} style={{ "--span": group.span }}>
-                <h2 className="sk-h">{group.title}</h2>
-                <ul className="sk-list">
-                  {group.items.map((item) => (
-                    <Skill key={item.name} {...item} />
-                  ))}
-                </ul>
-              </section>
-            ))}
+            {loading && <p>Loading skills...</p>}
+
+            {error && <p>{error}</p>}
+
+            {!loading &&
+              !error &&
+              skillGroups.map((group) => (
+                <section
+                  className="sk-group"
+                  key={group.id}
+                  style={{ "--span": group.span }}
+                >
+                  <h2 className="sk-h">{group.title}</h2>
+
+                  <ul className="sk-list">
+                    {group.skills.map((item) => (
+                      <Skill
+                        key={item.id}
+                        name={item.name}
+                        icon={item.icon}
+                        abbr={item.abbr}
+                      />
+                    ))}
+                  </ul>
+                </section>
+              ))}
           </div>
         </div>
 
         {/* ---------- Right: download button + quote panel ---------- */}
         <aside className="sk-side">
-          <a className="pf-btn pf-btn-line sk-pdf" href={PDF} download>
-            <FiDownload aria-hidden="true" /> Download Skills PDF
+          <a
+            className="pf-btn pf-btn-line sk-pdf"
+            href={PDF}
+            download
+          >
+            <FiDownload aria-hidden="true" />
+            Download Skills PDF
           </a>
 
           <div
@@ -108,11 +172,18 @@ export default function Skills() {
               backgroundImage: `url(${PANEL_IMAGE}), linear-gradient(180deg, #0f1218 0%, #1a2030 60%, #2b3345 100%)`,
             }}
           >
-            <FiTerminal className="sk-term" aria-hidden="true" />
-            <blockquote className="sk-quote">&ldquo; {QUOTE} &rdquo;</blockquote>
+            <FiTerminal
+              className="sk-term"
+              aria-hidden="true"
+            />
+
+            <blockquote className="sk-quote">
+              &ldquo; {QUOTE} &rdquo;
+            </blockquote>
           </div>
         </aside>
       </div>
     </section>
   );
 }
+

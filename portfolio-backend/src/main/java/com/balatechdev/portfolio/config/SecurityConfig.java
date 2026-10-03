@@ -2,8 +2,10 @@ package com.balatechdev.portfolio.config;
 
 import java.util.Base64;
 import java.util.List;
+
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,33 +52,26 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-//    @Bean
-//    public AuthenticationManager authenticationManager(
-//            UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(passwordEncoder);
-//        provider.setUserDetailsService(userDetailsService);
-//        return provider::authenticate;
-//    }
-
-
     @Bean
     public AuthenticationProvider authenticationProvider(
             UserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder) {
 
-        // Pass userDetailsService directly into the constructor
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider((PasswordEncoder) userDetailsService);
+        DaoAuthenticationProvider provider =
+                new DaoAuthenticationProvider(passwordEncoder);
 
-        // Set the password encoder using setter method
-        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(userDetailsService);
 
         return provider;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config) throws Exception {
+
         return config.getAuthenticationManager();
     }
+
     private SecretKey jwtSecretKey() {
         byte[] keyBytes = Base64.getDecoder().decode(jwtProperties.secret());
         return new SecretKeySpec(keyBytes, "HmacSHA256");
@@ -84,8 +79,12 @@ public class SecurityConfig {
 
     @Bean
     public JwtEncoder jwtEncoder() {
-        OctetSequenceKey key = new OctetSequenceKey.Builder(jwtSecretKey()).build();
-        return new NimbusJwtEncoder(new ImmutableSecret<>(key.toSecretKey()));
+        OctetSequenceKey key =
+                new OctetSequenceKey.Builder(jwtSecretKey()).build();
+
+        return new NimbusJwtEncoder(
+                new ImmutableSecret<>(key.toSecretKey())
+        );
     }
 
     @Bean
@@ -95,37 +94,91 @@ public class SecurityConfig {
                 .build();
     }
 
-    // Reads the "roles" claim (e.g. ["ADMIN"]) and turns it into Spring Security
-    // authorities prefixed with ROLE_, so @PreAuthorize("hasRole('ADMIN')") works.
+    /*
+     * Reads the "roles" claim and converts roles such as:
+     *
+     * ADMIN
+     *
+     * into:
+     *
+     * ROLE_ADMIN
+     *
+     * This allows:
+     *
+     * @PreAuthorize("hasRole('ADMIN')")
+     *
+     * to work correctly.
+     */
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+
+        JwtGrantedAuthoritiesConverter authoritiesConverter =
+                new JwtGrantedAuthoritiesConverter();
+
         authoritiesConverter.setAuthoritiesClaimName("roles");
         authoritiesConverter.setAuthorityPrefix("");
         authoritiesConverter.setAuthoritiesClaimDelimiter(",");
 
-        SimpleAuthorityMapper roleMapper = new SimpleAuthorityMapper();
+        SimpleAuthorityMapper roleMapper =
+                new SimpleAuthorityMapper();
+
         roleMapper.setPrefix("ROLE_");
 
-        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        JwtAuthenticationConverter converter =
+                new JwtAuthenticationConverter();
+
         converter.setJwtGrantedAuthoritiesConverter(
-                jwt -> roleMapper.mapAuthorities(authoritiesConverter.convert(jwt)));
+                jwt -> roleMapper.mapAuthorities(
+                        authoritiesConverter.convert(jwt)
+                )
+        );
+
         return converter;
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource(
             org.springframework.core.env.Environment env) {
-        String origins = env.getProperty("app.cors.allowed-origins", "http://localhost:5173");
+
+        String origins = env.getProperty(
+                "app.cors.allowed-origins",
+                "http://localhost:5173"
+        );
 
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(origins.split(",")));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+
+        config.setAllowedOrigins(
+                List.of(origins.split(","))
+        );
+
+        config.setAllowedMethods(
+                List.of(
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE",
+                        "OPTIONS"
+                )
+        );
+
+        config.setAllowedHeaders(
+                List.of(
+                        "Authorization",
+                        "Content-Type"
+                )
+        );
+
         config.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+
+        source.registerCorsConfiguration(
+                "/**",
+                config
+        );
+
         return source;
     }
 
@@ -133,22 +186,69 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(
             HttpSecurity http,
             JwtAuthenticationConverter jwtAuthenticationConverter,
-            CorsConfigurationSource corsConfigurationSource) throws Exception {
+            CorsConfigurationSource corsConfigurationSource)
+            throws Exception {
 
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource))
+        http
+                .cors(cors ->
+                        cors.configurationSource(
+                                corsConfigurationSource
+                        )
+                )
+
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/actuator/health", "/actuator/info").permitAll()
-                        .requestMatchers("/api/v1/auth/login").permitAll()
-                        // Admin rule MUST come before the public GET rule: the first matching rule wins.
-                        .requestMatchers("/api/v1/admin/**").authenticated()
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/**").permitAll()
-                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/contact").permitAll()
 
-                        .anyRequest().denyAll())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt ->
-                        jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)));
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS
+                        )
+                )
+
+                .authorizeHttpRequests(auth ->
+                        auth
+
+                                .requestMatchers(
+                                        "/actuator/health",
+                                        "/actuator/info"
+                                )
+                                .permitAll()
+
+                                .requestMatchers(
+                                        "/api/v1/auth/login"
+                                )
+                                .permitAll()
+
+                                // Admin endpoints require ADMIN role.
+                                .requestMatchers(
+                                        "/api/v1/admin/**"
+                                )
+                                .hasRole("ADMIN")
+
+                                // Public GET endpoints.
+                                .requestMatchers(
+                                        org.springframework.http.HttpMethod.GET,
+                                        "/api/v1/**"
+                                )
+                                .permitAll()
+
+                                // Public contact form.
+                                .requestMatchers(
+                                        org.springframework.http.HttpMethod.POST,
+                                        "/api/v1/contact"
+                                )
+                                .permitAll()
+
+                                .anyRequest()
+                                .denyAll()
+                )
+
+                .oauth2ResourceServer(oauth2 ->
+                        oauth2.jwt(jwt ->
+                                jwt.jwtAuthenticationConverter(
+                                        jwtAuthenticationConverter
+                                )
+                        )
+                );
 
         return http.build();
     }

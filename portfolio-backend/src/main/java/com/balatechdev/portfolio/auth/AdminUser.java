@@ -31,4 +31,8 @@ public class AdminUser extends BaseEntity {
     public String getPasswordHash() {
         return passwordHash;
     }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
 }

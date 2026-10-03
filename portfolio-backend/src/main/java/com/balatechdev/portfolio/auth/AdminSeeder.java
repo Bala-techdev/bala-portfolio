@@ -37,7 +37,14 @@ public class AdminSeeder implements CommandLineRunner {
         if (repository.count() > 0) {
             return;
         }
-        repository.save(new AdminUser(adminUsername, passwordEncoder.encode(adminPassword)));
+
+        repository.save(
+                new AdminUser(
+                        adminUsername,
+                        passwordEncoder.encode(adminPassword)
+                )
+        );
+
         log.info("Seeded initial admin user '{}'", adminUsername);
     }
 }

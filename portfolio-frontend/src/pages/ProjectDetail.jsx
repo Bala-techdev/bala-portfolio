@@ -1,5 +1,12 @@
-import { useState } from "react";
-import { FiArrowLeft, FiCheck, FiCode, FiGithub, FiPlayCircle } from "react-icons/fi";
+import { useEffect, useState } from "react";
+import {
+  FiArrowLeft,
+  FiCheck,
+  FiCode,
+  FiGithub,
+  FiPlayCircle,
+} from "react-icons/fi";
+
 import {
   SiReact,
   SiSpringboot,
@@ -12,80 +19,265 @@ import {
   SiExpress,
   SiMongodb,
 } from "react-icons/si";
-import { projects } from "../data/projects";
+
 import ProjectImage from "../components/ProjectImage";
 import "./ProjectDetail.css";
 
-// Icon + color for each tech name used in data/projects.js
+// Icon + color for technology names
 const TECH = {
-  "React.js": { icon: SiReact, color: "#149eca" },
-  "Spring Boot": { icon: SiSpringboot, color: "#6db33f" },
-  MySQL: { icon: SiMysql, color: "#00758f" },
-  "Tailwind CSS": { icon: SiTailwindcss, color: "#06b6d4" },
-  Python: { icon: SiPython, color: "#3776ab" },
-  "Scikit-learn": { icon: SiScikitlearn, color: "#f7931e" },
-  Flask: { icon: SiFlask, color: "#1f2937" },
-  "Node.js": { icon: SiNodedotjs, color: "#5fa04e" },
-  "Express.js": { icon: SiExpress, color: "#1f2937" },
-  MongoDB: { icon: SiMongodb, color: "#47a248" },
+  "React.js": {
+    icon: SiReact,
+    color: "#149eca",
+  },
+
+  "Spring Boot": {
+    icon: SiSpringboot,
+    color: "#6db33f",
+  },
+
+  MySQL: {
+    icon: SiMysql,
+    color: "#00758f",
+  },
+
+  "Tailwind CSS": {
+    icon: SiTailwindcss,
+    color: "#06b6d4",
+  },
+
+  Python: {
+    icon: SiPython,
+    color: "#3776ab",
+  },
+
+  "Scikit-learn": {
+    icon: SiScikitlearn,
+    color: "#f7931e",
+  },
+
+  Flask: {
+    icon: SiFlask,
+    color: "#1f2937",
+  },
+
+  "Node.js": {
+    icon: SiNodedotjs,
+    color: "#5fa04e",
+  },
+
+  "Express.js": {
+    icon: SiExpress,
+    color: "#1f2937",
+  },
+
+  MongoDB: {
+    icon: SiMongodb,
+    color: "#47a248",
+  },
 };
 
 export default function ProjectDetail({ id, onBack }) {
-  const project = projects.find((p) => p.id === id);
+  const [project, setProject] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [active, setActive] = useState(0);
 
-  if (!project) {
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadProject = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        // Get all projects from backend
+        const response = await fetch(
+          "/api/v1/projects",
+          {
+            headers: {
+              Accept: "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            `HTTP ${response.status}`
+          );
+        }
+
+        const projects = await response.json();
+
+        // App currently passes numeric project ID
+        const foundProject = projects.find(
+          (item) => String(item.id) === String(id)
+        );
+
+        if (!cancelled) {
+          if (foundProject) {
+            setProject(foundProject);
+          } else {
+            setProject(null);
+            setError("Project not found.");
+          }
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.error(
+            "Failed to load project:",
+            err
+          );
+
+          setError(
+            "Unable to load project."
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadProject();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  // Reset gallery when project changes
+  useEffect(() => {
+    setActive(0);
+  }, [project]);
+
+  // =========================
+  // Loading
+  // =========================
+  if (loading) {
     return (
       <section className="pd">
-        <button type="button" className="pd-back" onClick={onBack}>
-          <FiArrowLeft aria-hidden="true" /> Back to Projects
+        <button
+          type="button"
+          className="pd-back"
+          onClick={onBack}
+        >
+          <FiArrowLeft aria-hidden="true" />
+          Back to Projects
         </button>
-        <p className="pd-tagline">Project not found.</p>
+
+        <p className="pd-tagline">
+          Loading project...
+        </p>
       </section>
     );
   }
 
-  const shots = project.images.length ? project.images : [null];
+  // =========================
+  // Error / Not Found
+  // =========================
+  if (!project) {
+    return (
+      <section className="pd">
+        <button
+          type="button"
+          className="pd-back"
+          onClick={onBack}
+        >
+          <FiArrowLeft aria-hidden="true" />
+          Back to Projects
+        </button>
 
+        <p className="pd-tagline">
+          {error || "Project not found."}
+        </p>
+      </section>
+    );
+  }
+
+  // =========================
+  // Images
+  // =========================
+  const shots =
+    Array.isArray(project.images) &&
+    project.images.length > 0
+      ? project.images
+      : [null];
+
+  // =========================
+  // Render
+  // =========================
   return (
     <section className="pd">
       <div className="pd-grid">
-        {/* ---------- Left: header + gallery ---------- */}
+        {/* =========================
+            Left: Header + Gallery
+            ========================= */}
         <div className="pd-main">
-          <button type="button" className="pd-back" onClick={onBack}>
-            <FiArrowLeft aria-hidden="true" /> Back to Projects
+          <button
+            type="button"
+            className="pd-back"
+            onClick={onBack}
+          >
+            <FiArrowLeft aria-hidden="true" />
+            Back to Projects
           </button>
 
-          <h1 className="pd-title">{project.title}</h1>
-          <p className="pd-tagline">{project.tagline}</p>
+          <h1 className="pd-title">
+            {project.title}
+          </h1>
+
+          {project.tagline && (
+            <p className="pd-tagline">
+              {project.tagline}
+            </p>
+          )}
 
           <div className="pd-actions">
-            <a
-              className="pf-btn pf-btn-dark"
-              href={project.liveUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <FiPlayCircle aria-hidden="true" /> Live Demo
-            </a>
+            {project.liveUrl && (
+              <a
+                className="pf-btn pf-btn-dark"
+                href={project.liveUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <FiPlayCircle
+                  aria-hidden="true"
+                />
+                Live Demo
+              </a>
+            )}
 
-            <a
-              className="pf-btn pf-btn-line"
-              href={project.githubUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <FiGithub aria-hidden="true" /> GitHub
-            </a>
-            <span className="pd-tag">{project.category}</span>
+            {project.githubUrl && (
+              <a
+                className="pf-btn pf-btn-line"
+                href={project.githubUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <FiGithub
+                  aria-hidden="true"
+                />
+                GitHub
+              </a>
+            )}
+
+            {project.category && (
+              <span className="pd-tag">
+                {project.category}
+              </span>
+            )}
           </div>
 
+          {/* Gallery */}
           <div className="pd-shot">
             <div className="pd-shot-main">
               <ProjectImage
-                key={active}
+                key={`${project.id}-${active}`}
                 src={shots[active]}
-                alt={`${project.title} screenshot ${active + 1}`}
+                alt={`${project.title} screenshot ${
+                  active + 1
+                }`}
                 accent={project.accent}
                 icon={project.icon}
               />
@@ -93,14 +285,24 @@ export default function ProjectDetail({ id, onBack }) {
 
             {shots.length > 1 && (
               <div className="pd-thumbs">
-                {shots.map((src, i) => (
+                {shots.map((src, index) => (
                   <button
-                    key={src ? `${src}-${i}` : i}
+                    key={
+                      src
+                        ? `${src}-${index}`
+                        : index
+                    }
                     type="button"
                     className="pd-thumb"
-                    aria-label={`Show screenshot ${i + 1}`}
-                    aria-pressed={active === i}
-                    onClick={() => setActive(i)}
+                    aria-label={`Show screenshot ${
+                      index + 1
+                    }`}
+                    aria-pressed={
+                      active === index
+                    }
+                    onClick={() =>
+                      setActive(index)
+                    }
                   >
                     <ProjectImage
                       src={src}
@@ -115,44 +317,93 @@ export default function ProjectDetail({ id, onBack }) {
           </div>
         </div>
 
-        {/* ---------- Right: overview, features, tech ---------- */}
+        {/* =========================
+            Right: Project Information
+            ========================= */}
         <aside className="pd-side">
-          <section>
-            <h2 className="pd-h2">Project Overview</h2>
-            <p className="pd-overview">{project.overview}</p>
-          </section>
+          {/* Overview */}
+          {project.overview && (
+            <section>
+              <h2 className="pd-h2">
+                Project Overview
+              </h2>
 
-          <section>
-            <h2 className="pd-h2">Key Features</h2>
-            <ul className="pd-features">
-              {project.features.map((f) => (
-                <li key={f}>
-                  <span className="pd-check" aria-hidden="true">
-                    <FiCheck />
-                  </span>
-                  {f}
-                </li>
-              ))}
-            </ul>
-          </section>
+              <p className="pd-overview">
+                {project.overview}
+              </p>
+            </section>
+          )}
 
-          <section>
-            <h2 className="pd-h2">Tech Stack</h2>
-            <ul className="pd-tech">
-              {project.tech.map((name) => {
-                const { icon: Icon, color } = TECH[name] || {
-                  icon: FiCode,
-                  color: "#6b7280",
-                };
-                return (
-                  <li className="pd-tech-item" key={name}>
-                    <Icon aria-hidden="true" style={{ color }} />
-                    {name}
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
+          {/* Features */}
+          {Array.isArray(project.features) &&
+            project.features.length > 0 && (
+              <section>
+                <h2 className="pd-h2">
+                  Key Features
+                </h2>
+
+                <ul className="pd-features">
+                  {project.features.map(
+                    (feature, index) => (
+                      <li
+                        key={`${feature}-${index}`}
+                      >
+                        <span
+                          className="pd-check"
+                          aria-hidden="true"
+                        >
+                          <FiCheck />
+                        </span>
+
+                        {feature}
+                      </li>
+                    )
+                  )}
+                </ul>
+              </section>
+            )}
+
+          {/* Tech Stack */}
+          {Array.isArray(project.tech) &&
+            project.tech.length > 0 && (
+              <section>
+                <h2 className="pd-h2">
+                  Tech Stack
+                </h2>
+
+                <ul className="pd-tech">
+                  {project.tech.map(
+                    (name) => {
+                      const {
+                        icon: Icon,
+                        color,
+                      } =
+                        TECH[name] || {
+                          icon: FiCode,
+                          color:
+                            "#6b7280",
+                        };
+
+                      return (
+                        <li
+                          className="pd-tech-item"
+                          key={name}
+                        >
+                          <Icon
+                            aria-hidden="true"
+                            style={{
+                              color,
+                            }}
+                          />
+
+                          {name}
+                        </li>
+                      );
+                    }
+                  )}
+                </ul>
+              </section>
+            )}
         </aside>
       </div>
     </section>
