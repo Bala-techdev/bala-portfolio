@@ -68,15 +68,21 @@ export function PortfolioProvider({ children }) {
         ]);
 
         if (!cancelled) {
-          setPortfolio({
-            projects: Array.isArray(projects) ? projects : [],
-            skills: Array.isArray(skills) ? skills : [],
-            education: Array.isArray(education) ? education : [],
-            experience: Array.isArray(experience) ? experience : [],
-            certificates: Array.isArray(certificates) ? certificates : [],
-            blog: Array.isArray(blog) ? blog : [],
-          });
-        }
+  setPortfolio({
+    projects: Array.isArray(projects) ? projects : [],
+    skills: Array.isArray(skills) ? skills : [],
+    education: Array.isArray(education) ? education : [],
+    experience: Array.isArray(experience) ? experience : [],
+    certificates: Array.isArray(certificates)
+      ? certificates
+      : [],
+    blog: Array.isArray(blog)
+      ? blog
+      : Array.isArray(blog?.content)
+        ? blog.content
+        : [],
+  });
+}
       } catch (err) {
         console.error("Portfolio data loading failed:", err);
 
