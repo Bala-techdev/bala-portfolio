@@ -5,11 +5,14 @@ import ProjectImage from "../components/ProjectImage";
 import "./Blog.css";
 
 export default function BlogPost({ id, onBack }) {
-  const { portfolio, loading, error: portfolioError } = usePortfolio();
+  const {
+    portfolio,
+    loading,
+    error: portfolioError,
+  } = usePortfolio();
 
   const [post, setPost] = useState(null);
   const [error, setError] = useState("");
-  const [activeId, setActiveId] = useState(id);
 
   const posts = useMemo(() => {
     const blogData = portfolio.blog;
@@ -30,8 +33,10 @@ export default function BlogPost({ id, onBack }) {
       return;
     }
 
-    setActiveId(id);
     setError("");
+
+    console.log("BlogPost ID/slug:", id);
+    console.log("Available posts:", posts);
 
     const foundPost = posts.find(
       (item) =>
@@ -79,9 +84,7 @@ export default function BlogPost({ id, onBack }) {
         </button>
 
         <p className="bp-date">
-          {error ||
-            portfolioError ||
-            "Post not found."}
+          {error || portfolioError || "Post not found."}
         </p>
       </section>
     );
@@ -94,13 +97,14 @@ export default function BlogPost({ id, onBack }) {
   const isoDate = post.publishedAt?.slice(0, 10);
 
   const formattedDate = post.publishedAt
-    ? new Date(
-        post.publishedAt
-      ).toLocaleDateString("en-US", {
-        month: "short",
-        day: "2-digit",
-        year: "numeric",
-      })
+    ? new Date(post.publishedAt).toLocaleDateString(
+        "en-US",
+        {
+          month: "short",
+          day: "2-digit",
+          year: "numeric",
+        }
+      )
     : "";
 
   return (
@@ -135,8 +139,10 @@ export default function BlogPost({ id, onBack }) {
       </div>
 
       <div className="bp-body">
-        {paragraphs.map((paragraph, i) => (
-          <p key={i}>{paragraph}</p>
+        {paragraphs.map((paragraph, index) => (
+          <p key={index}>
+            {paragraph}
+          </p>
         ))}
       </div>
     </article>
