@@ -1,43 +1,65 @@
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { usePortfolio } from "../context/PortfolioContext";
+import { apiUrl } from "../api/api";
 import { FiArrowLeft } from "react-icons/fi";
 import ProjectImage from "../components/ProjectImage";
 import "./Blog.css";
 
 export default function BlogPost({ id, onBack }) {
-  const {
-    portfolio,
-    loading,
-    error: portfolioError,
-  } = usePortfolio();
+  const { loading: portfolioLoading } = usePortfolio();
 
-  const posts = useMemo(() => {
-    const blogData = portfolio.blog;
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-    if (Array.isArray(blogData)) {
-      return blogData;
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadPost = async () => {
+      try {
+        setLoading(true);
+        setError("");
+        setPost(null);
+
+        const response = await fetch(
+          apiUrl(`/api/v1/blog/${id}`)
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!cancelled) {
+          setPost(data);
+        }
+      } catch (err) {
+        console.error("Failed to load blog post:", err);
+
+        if (!cancelled) {
+          setError("Unable to load this blog post.");
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    if (id) {
+      loadPost();
+    } else {
+      setLoading(false);
+      setError("Post not found.");
     }
 
-    if (Array.isArray(blogData?.content)) {
-      return blogData.content;
-    }
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
-    return [];
-  }, [portfolio.blog]);
-
-  const post = useMemo(() => {
-    if (!id) {
-      return null;
-    }
-
-    return posts.find(
-      (item) =>
-        String(item.id) === String(id) ||
-        String(item.slug) === String(id)
-    );
-  }, [posts, id]);
-
-  if (loading) {
+  if (portfolioLoading || loading) {
     return (
       <section className="bp">
         <button
@@ -56,7 +78,7 @@ export default function BlogPost({ id, onBack }) {
     );
   }
 
-  if (portfolioError || !post) {
+  if (error || !post) {
     return (
       <section className="bp">
         <button
@@ -69,7 +91,7 @@ export default function BlogPost({ id, onBack }) {
         </button>
 
         <p className="bp-date">
-          {portfolioError || "Post not found."}
+          {error || "Post not found."}
         </p>
       </section>
     );
