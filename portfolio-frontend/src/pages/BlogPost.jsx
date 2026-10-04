@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { usePortfolio } from "../context/PortfolioContext";
 import { FiArrowLeft } from "react-icons/fi";
 import ProjectImage from "../components/ProjectImage";
@@ -10,9 +10,6 @@ export default function BlogPost({ id, onBack }) {
     loading,
     error: portfolioError,
   } = usePortfolio();
-
-  const [post, setPost] = useState(null);
-  const [error, setError] = useState("");
 
   const posts = useMemo(() => {
     const blogData = portfolio.blog;
@@ -28,29 +25,17 @@ export default function BlogPost({ id, onBack }) {
     return [];
   }, [portfolio.blog]);
 
-  useEffect(() => {
-    if (loading) {
-      return;
+  const post = useMemo(() => {
+    if (!id) {
+      return null;
     }
 
-    setError("");
-
-    console.log("BlogPost ID/slug:", id);
-    console.log("Available posts:", posts);
-
-    const foundPost = posts.find(
+    return posts.find(
       (item) =>
         String(item.id) === String(id) ||
         String(item.slug) === String(id)
     );
-
-    if (foundPost) {
-      setPost(foundPost);
-    } else {
-      setPost(null);
-      setError("Post not found.");
-    }
-  }, [id, loading, posts]);
+  }, [posts, id]);
 
   if (loading) {
     return (
@@ -71,7 +56,7 @@ export default function BlogPost({ id, onBack }) {
     );
   }
 
-  if (error || portfolioError || !post) {
+  if (portfolioError || !post) {
     return (
       <section className="bp">
         <button
@@ -84,7 +69,7 @@ export default function BlogPost({ id, onBack }) {
         </button>
 
         <p className="bp-date">
-          {error || portfolioError || "Post not found."}
+          {portfolioError || "Post not found."}
         </p>
       </section>
     );
