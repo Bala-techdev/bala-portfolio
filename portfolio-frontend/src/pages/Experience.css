@@ -209,19 +209,6 @@
 }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 1024px) {
-  .ex-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .ex-side {
-    position: relative;
-    top: 0;
-    height: 360px;
-    min-height: 0;
-  }
-}
-
 @media (max-width: 560px) {
   .ex-card {
     padding: 16px;
@@ -230,5 +217,22 @@
   .ex-logo {
     width: 48px;
     height: 48px;
+  }
+
+  .ex-side {
+    height: 430px;
+    min-height: 430px;
+    border-radius: 16px;
+  }
+
+  .ex-photo {
+    object-fit: contain;
+    object-position: center bottom;
+  }
+
+  .ex-quote {
+    top: 72%;
+    width: 90%;
+    font-size: 28px;
   }
 }

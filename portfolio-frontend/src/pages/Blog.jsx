@@ -68,7 +68,7 @@ export default function Blog({ onOpenPost }) {
             <article
               className="bl-card"
               key={post.id}
-              onClick={() => onOpenPost(post.id)}
+              onClick={() => onOpenPost(post.slug)}
             >
               <div className="bl-cover">
                 <ProjectImage

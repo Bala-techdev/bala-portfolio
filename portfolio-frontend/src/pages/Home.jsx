@@ -1,7 +1,6 @@
-
-
 import { useState } from "react";
 import { FiArrowRight, FiDownload, FiImage } from "react-icons/fi";
+import { usePortfolio } from "../context/PortfolioContext";
 
 /* EDIT YOUR DETAILS HERE */
 const NAME = "Bala S";
@@ -11,15 +10,20 @@ const BIO =
 const PHOTO = "/profile.png"; // put your image in the "public" folder
 const RESUME = "/resume.pdf"; // put your resume in the "public" folder
 
-const STATS = [
-  { value: "3+", label: "Years of Learning" },
-  { value: "15+", label: "Projects Completed" },
-  { value: "500+", label: "DSA Problems Solved" },
-  { value: "∞", label: "Ideas to Build" },
-];
-
 export default function Home({ onNavigate }) {
+  const { portfolio } = usePortfolio();
+
   const [photoOk, setPhotoOk] = useState(true);
+
+  const stats = [
+    { value: "3+", label: "Years of Learning" },
+    {
+      value: `${portfolio.projects.length}+`,
+      label: "Projects Completed",
+    },
+    { value: "500+", label: "DSA Problems Solved" },
+    { value: "∞", label: "Ideas to Build" },
+  ];
 
   return (
     <>
@@ -36,6 +40,7 @@ export default function Home({ onNavigate }) {
           </h1>
 
           <p className="pf-role">{ROLE}</p>
+
           <p className="pf-bio">{BIO}</p>
 
           <div className="pf-actions">
@@ -46,7 +51,12 @@ export default function Home({ onNavigate }) {
             >
               View My Work <FiArrowRight aria-hidden="true" />
             </button>
-            <a className="pf-btn pf-btn-line" href={RESUME} download>
+
+            <a
+              className="pf-btn pf-btn-line"
+              href={RESUME}
+              download
+            >
               Download Resume <FiDownload aria-hidden="true" />
             </a>
           </div>
@@ -78,6 +88,7 @@ export default function Home({ onNavigate }) {
               <span>Brighter</span>
               <span>Tomorrow</span>
             </p>
+
             <svg
               className="pf-arrow"
               viewBox="0 0 60 50"
@@ -95,10 +106,10 @@ export default function Home({ onNavigate }) {
       </section>
 
       <section className="pf-stats" aria-label="Highlights">
-        {STATS.map((s) => (
-          <div className="pf-stat" key={s.label}>
-            <span className="pf-num">{s.value}</span>
-            <span className="pf-label">{s.label}</span>
+        {stats.map((stat) => (
+          <div className="pf-stat" key={stat.label}>
+            <span className="pf-num">{stat.value}</span>
+            <span className="pf-label">{stat.label}</span>
           </div>
         ))}
       </section>

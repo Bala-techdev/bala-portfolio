@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   FiHome,
   FiUser,
@@ -18,7 +19,8 @@ import {
 /* EDIT YOUR LINKS HERE */
 const LINKS = {
   github: "https://github.com/bala-techdev",
-  linkedin: "https://www.linkedin.com/in/bala-s-160562370?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+  linkedin:
+    "https://www.linkedin.com/in/bala-s-160562370?utm_source=share_via&utm_content=profile&utm_medium=member_android",
   email: "mailto:bala.selvarasu.dev@gmail.com",
 };
 
@@ -36,23 +38,52 @@ const NAV = [
 ];
 
 export default function Sidebar({ active, onNavigate }) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setMobileOpen((open) => !open);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileOpen(false);
+  };
+
   const openAdmin = () => {
+    setMobileOpen(false);
     window.location.hash = "/admin";
   };
 
+  const navigate = (id) => {
+    setMobileOpen(false);
+    onNavigate(id);
+  };
+
   return (
-    <aside className="pf-sidebar">
+    <aside
+      className={`pf-sidebar ${
+        mobileOpen ? "pf-sidebar-mobile-open" : ""
+      }`}
+    >
+      {/* Top / Logo / Navigation */}
       <div className="pf-side-top">
         <button
           type="button"
           className="pf-logo"
-          aria-label="Home"
-          onClick={() => onNavigate("home")}
+          aria-label={
+            mobileOpen
+              ? "Close extra navigation"
+              : "Open extra navigation"
+          }
+          aria-expanded={mobileOpen}
+          onClick={toggleMobileMenu}
         >
           B
         </button>
 
-        <nav aria-label="Primary">
+        <nav
+          className="pf-navigation"
+          aria-label="Primary navigation"
+        >
           <ul className="pf-nav">
             {NAV.map(({ id, label, icon: Icon }) => (
               <li key={id}>
@@ -63,9 +94,10 @@ export default function Sidebar({ active, onNavigate }) {
                   aria-current={
                     active === id ? "page" : undefined
                   }
-                  onClick={() => onNavigate(id)}
+                  onClick={() => navigate(id)}
                 >
                   <Icon aria-hidden="true" />
+
                   <span className="pf-link-text">
                     {label}
                   </span>
@@ -76,7 +108,9 @@ export default function Sidebar({ active, onNavigate }) {
         </nav>
       </div>
 
+      {/* Extra Mobile/Desktop Options */}
       <div className="pf-side-foot">
+        {/* Social Links */}
         <div className="pf-socials">
           <a
             href={LINKS.github}
@@ -84,7 +118,7 @@ export default function Sidebar({ active, onNavigate }) {
             rel="noreferrer"
             aria-label="GitHub"
           >
-            <FiGithub />
+            <FiGithub aria-hidden="true" />
           </a>
 
           <a
@@ -93,14 +127,14 @@ export default function Sidebar({ active, onNavigate }) {
             rel="noreferrer"
             aria-label="LinkedIn"
           >
-            <FiLinkedin />
+            <FiLinkedin aria-hidden="true" />
           </a>
 
           <a
             href={LINKS.email}
             aria-label="Email"
           >
-            <FiMail />
+            <FiMail aria-hidden="true" />
           </a>
         </div>
 
@@ -112,15 +146,17 @@ export default function Sidebar({ active, onNavigate }) {
           aria-label="Admin Login"
         >
           <FiSettings aria-hidden="true" />
+
           <span className="pf-link-text">
             Admin
           </span>
         </button>
 
+        {/* Let's Talk */}
         <button
           type="button"
           className="pf-btn pf-btn-dark pf-talk"
-          onClick={() => onNavigate("contact")}
+          onClick={() => navigate("contact")}
         >
           Let&apos;s Talk
         </button>
