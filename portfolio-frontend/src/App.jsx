@@ -15,6 +15,7 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import { PortfolioProvider } from "./context/PortfolioContext";
 import "./App.css";
 import "./style.css";
 
@@ -108,9 +109,11 @@ let content;
   }
 
   return (
+    <PortfolioProvider>
     <div className="pf-app">
       <Sidebar active={section} onNavigate={navigate} />
       <main className="pf-main">{content}</main>
     </div>
+  </PortfolioProvider>
   );
 }

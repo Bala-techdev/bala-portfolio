@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { apiUrl } from "../api/api";
+import { usePortfolio } from "../context/PortfolioContext";
 import {
   FiArrowUpRight,
   FiChevronLeft,
@@ -12,54 +12,12 @@ const PER_PAGE = 3;
 const SOURCE_URL = "https://github.com/your-username";
 
 export default function Projects({ onOpenProject }) {
-  const [projects, setProjects] = useState([]);
+  const { portfolio, loading, error } = usePortfolio();
+
+  const projects = portfolio.projects;
+
   const [category, setCategory] = useState("All");
   const [pageNo, setPageNo] = useState(1);
-
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const loadProjects = async () => {
-      try {
-        setLoading(true);
-        setError("");
-
-        const response = await fetch(apiUrl("/api/v1/projects"), {
-          headers: {
-            Accept: "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (!cancelled) {
-          setProjects(Array.isArray(data) ? data : []);
-        }
-      } catch (err) {
-        if (!cancelled) {
-          console.error("Failed to load projects:", err);
-          setError("Unable to load projects.");
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadProjects();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const categories = useMemo(() => {
     const uniqueCategories = [

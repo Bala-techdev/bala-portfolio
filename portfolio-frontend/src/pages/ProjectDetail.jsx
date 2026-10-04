@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { apiUrl } from "../api/api";
+import { usePortfolio } from "../context/PortfolioContext";
+
 import {
   FiArrowLeft,
   FiCheck,
@@ -78,74 +79,35 @@ const TECH = {
 };
 
 export default function ProjectDetail({ id, onBack }) {
+  const { portfolio, loading, error: portfolioError } = usePortfolio();
+
   const [project, setProject] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [active, setActive] = useState(0);
 
+  /*
+   * Find the project from the projects that were already loaded
+   * by PortfolioContext.
+   *
+   * No additional API request is made here.
+   */
   useEffect(() => {
-    let cancelled = false;
+    if (loading) {
+      return;
+    }
 
-    const loadProject = async () => {
-      try {
-        setLoading(true);
-        setError("");
+    const foundProject = portfolio.projects.find(
+      (item) => String(item.id) === String(id)
+    );
 
-        // Get all projects from backend
-        const response = await fetch(
-  apiUrl("/api/v1/projects"),
-          {
-            headers: {
-              Accept: "application/json",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(
-            `HTTP ${response.status}`
-          );
-        }
-
-        const projects = await response.json();
-
-        // App currently passes numeric project ID
-        const foundProject = projects.find(
-          (item) => String(item.id) === String(id)
-        );
-
-        if (!cancelled) {
-          if (foundProject) {
-            setProject(foundProject);
-          } else {
-            setProject(null);
-            setError("Project not found.");
-          }
-        }
-      } catch (err) {
-        if (!cancelled) {
-          console.error(
-            "Failed to load project:",
-            err
-          );
-
-          setError(
-            "Unable to load project."
-          );
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadProject();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [id]);
+    if (foundProject) {
+      setProject(foundProject);
+      setError("");
+    } else {
+      setProject(null);
+      setError("Project not found.");
+    }
+  }, [id, loading, portfolio.projects]);
 
   // Reset gallery when project changes
   useEffect(() => {
@@ -155,6 +117,7 @@ export default function ProjectDetail({ id, onBack }) {
   // =========================
   // Loading
   // =========================
+
   if (loading) {
     return (
       <section className="pd">
@@ -177,6 +140,7 @@ export default function ProjectDetail({ id, onBack }) {
   // =========================
   // Error / Not Found
   // =========================
+
   if (!project) {
     return (
       <section className="pd">
@@ -190,7 +154,7 @@ export default function ProjectDetail({ id, onBack }) {
         </button>
 
         <p className="pd-tagline">
-          {error || "Project not found."}
+          {error || portfolioError || "Project not found."}
         </p>
       </section>
     );
@@ -199,6 +163,7 @@ export default function ProjectDetail({ id, onBack }) {
   // =========================
   // Images
   // =========================
+
   const shots =
     Array.isArray(project.images) &&
     project.images.length > 0
@@ -208,12 +173,14 @@ export default function ProjectDetail({ id, onBack }) {
   // =========================
   // Render
   // =========================
+
   return (
     <section className="pd">
       <div className="pd-grid">
         {/* =========================
             Left: Header + Gallery
             ========================= */}
+
         <div className="pd-main">
           <button
             type="button"
@@ -242,9 +209,7 @@ export default function ProjectDetail({ id, onBack }) {
                 target="_blank"
                 rel="noreferrer"
               >
-                <FiPlayCircle
-                  aria-hidden="true"
-                />
+                <FiPlayCircle aria-hidden="true" />
                 Live Demo
               </a>
             )}
@@ -256,9 +221,7 @@ export default function ProjectDetail({ id, onBack }) {
                 target="_blank"
                 rel="noreferrer"
               >
-                <FiGithub
-                  aria-hidden="true"
-                />
+                <FiGithub aria-hidden="true" />
                 GitHub
               </a>
             )}
@@ -271,6 +234,7 @@ export default function ProjectDetail({ id, onBack }) {
           </div>
 
           {/* Gallery */}
+
           <div className="pd-shot">
             <div className="pd-shot-main">
               <ProjectImage
@@ -321,8 +285,10 @@ export default function ProjectDetail({ id, onBack }) {
         {/* =========================
             Right: Project Information
             ========================= */}
+
         <aside className="pd-side">
           {/* Overview */}
+
           {project.overview && (
             <section>
               <h2 className="pd-h2">
@@ -336,6 +302,7 @@ export default function ProjectDetail({ id, onBack }) {
           )}
 
           {/* Features */}
+
           {Array.isArray(project.features) &&
             project.features.length > 0 && (
               <section>
@@ -365,6 +332,7 @@ export default function ProjectDetail({ id, onBack }) {
             )}
 
           {/* Tech Stack */}
+
           {Array.isArray(project.tech) &&
             project.tech.length > 0 && (
               <section>
@@ -373,35 +341,31 @@ export default function ProjectDetail({ id, onBack }) {
                 </h2>
 
                 <ul className="pd-tech">
-                  {project.tech.map(
-                    (name) => {
-                      const {
-                        icon: Icon,
-                        color,
-                      } =
-                        TECH[name] || {
-                          icon: FiCode,
-                          color:
-                            "#6b7280",
-                        };
+                  {project.tech.map((name) => {
+                    const {
+                      icon: Icon,
+                      color,
+                    } = TECH[name] || {
+                      icon: FiCode,
+                      color: "#6b7280",
+                    };
 
-                      return (
-                        <li
-                          className="pd-tech-item"
-                          key={name}
-                        >
-                          <Icon
-                            aria-hidden="true"
-                            style={{
-                              color,
-                            }}
-                          />
+                    return (
+                      <li
+                        className="pd-tech-item"
+                        key={name}
+                      >
+                        <Icon
+                          aria-hidden="true"
+                          style={{
+                            color,
+                          }}
+                        />
 
-                          {name}
-                        </li>
-                      );
-                    }
-                  )}
+                        {name}
+                      </li>
+                    );
+                  })}
                 </ul>
               </section>
             )}

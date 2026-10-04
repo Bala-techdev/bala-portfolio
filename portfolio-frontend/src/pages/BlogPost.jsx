@@ -1,59 +1,87 @@
-import { useEffect, useState } from "react";
-import { apiUrl } from "../api/api";
+import { useEffect, useMemo, useState } from "react";
+import { usePortfolio } from "../context/PortfolioContext";
 import { FiArrowLeft } from "react-icons/fi";
 import ProjectImage from "../components/ProjectImage";
 import "./Blog.css";
 
 export default function BlogPost({ id, onBack }) {
+  const { portfolio, loading, error: portfolioError } = usePortfolio();
+
   const [post, setPost] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [activeId, setActiveId] = useState(id);
+
+  const posts = useMemo(() => {
+    const blogData = portfolio.blog;
+
+    if (Array.isArray(blogData)) {
+      return blogData;
+    }
+
+    if (Array.isArray(blogData?.content)) {
+      return blogData.content;
+    }
+
+    return [];
+  }, [portfolio.blog]);
 
   useEffect(() => {
-    setLoading(true);
+    if (loading) {
+      return;
+    }
+
+    setActiveId(id);
     setError("");
-    setPost(null);
 
-    fetch(apiUrl(`/api/v1/blog/${id}`))
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error: ${res.status}`);
-        }
+    const foundPost = posts.find(
+      (item) =>
+        String(item.id) === String(id) ||
+        String(item.slug) === String(id)
+    );
 
-        return res.json();
-      })
-      .then((data) => {
-        setPost(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to load blog post:", err);
-        setError("Unable to load this blog post.");
-        setLoading(false);
-      });
-  }, [id]);
+    if (foundPost) {
+      setPost(foundPost);
+    } else {
+      setPost(null);
+      setError("Post not found.");
+    }
+  }, [id, loading, posts]);
 
   if (loading) {
     return (
       <section className="bp">
-        <button type="button" className="bp-back" onClick={onBack}>
-          <FiArrowLeft aria-hidden="true" /> Back to Blog
+        <button
+          type="button"
+          className="bp-back"
+          onClick={onBack}
+        >
+          <FiArrowLeft aria-hidden="true" />
+          Back to Blog
         </button>
 
-        <p className="bp-date">Loading post...</p>
+        <p className="bp-date">
+          Loading post...
+        </p>
       </section>
     );
   }
 
-  if (error || !post) {
+  if (error || portfolioError || !post) {
     return (
       <section className="bp">
-        <button type="button" className="bp-back" onClick={onBack}>
-          <FiArrowLeft aria-hidden="true" /> Back to Blog
+        <button
+          type="button"
+          className="bp-back"
+          onClick={onBack}
+        >
+          <FiArrowLeft aria-hidden="true" />
+          Back to Blog
         </button>
 
         <p className="bp-date">
-          {error || "Post not found."}
+          {error ||
+            portfolioError ||
+            "Post not found."}
         </p>
       </section>
     );
@@ -66,7 +94,9 @@ export default function BlogPost({ id, onBack }) {
   const isoDate = post.publishedAt?.slice(0, 10);
 
   const formattedDate = post.publishedAt
-    ? new Date(post.publishedAt).toLocaleDateString("en-US", {
+    ? new Date(
+        post.publishedAt
+      ).toLocaleDateString("en-US", {
         month: "short",
         day: "2-digit",
         year: "numeric",
@@ -75,15 +105,25 @@ export default function BlogPost({ id, onBack }) {
 
   return (
     <article className="bp">
-      <button type="button" className="bp-back" onClick={onBack}>
-        <FiArrowLeft aria-hidden="true" /> Back to Blog
+      <button
+        type="button"
+        className="bp-back"
+        onClick={onBack}
+      >
+        <FiArrowLeft aria-hidden="true" />
+        Back to Blog
       </button>
 
-      <time className="bp-date" dateTime={isoDate}>
+      <time
+        className="bp-date"
+        dateTime={isoDate}
+      >
         {formattedDate}
       </time>
 
-      <h1 className="bp-title">{post.title}</h1>
+      <h1 className="bp-title">
+        {post.title}
+      </h1>
 
       <div className="bp-cover">
         <ProjectImage

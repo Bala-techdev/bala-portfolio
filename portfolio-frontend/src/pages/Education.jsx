@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { apiUrl } from "../api/api";
+import { useState } from "react";
+import { usePortfolio } from "../context/PortfolioContext";
 import "./Education.css";
 
 const PHOTO = "/education.jpg";
@@ -21,30 +21,11 @@ function Crest({ src, initials }) {
 }
 
 export default function Education() {
-  const [education, setEducation] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { portfolio, loading, error } = usePortfolio();
+
+  const education = portfolio.education;
 
   const [photoOk, setPhotoOk] = useState(true);
-
-  useEffect(() => {
-    fetch(apiUrl("/api/v1/education"))
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setEducation(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to load education:", err);
-        setError("Unable to load education data.");
-        setLoading(false);
-      });
-  }, []);
 
   return (
     <section className="ed">
@@ -62,8 +43,8 @@ export default function Education() {
               {education.map((item) => (
                 <li className="ed-item" key={item.id}>
                   <Crest
-                     src={item.logoUrl}
-                      initials={item.initials}
+                    src={item.logoUrl}
+                    initials={item.initials}
                   />
 
                   <div className="ed-info">

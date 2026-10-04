@@ -1,5 +1,4 @@
-import { apiUrl } from "../api/api";
-import { useEffect, useState } from "react";
+import { usePortfolio } from "../context/PortfolioContext";
 import {
   FiDownload,
   FiGlobe,
@@ -90,29 +89,9 @@ function Skill({ name, icon, abbr }) {
 }
 
 export default function Skills() {
-  const [skillGroups, setSkillGroups] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { portfolio, loading, error } = usePortfolio();
 
-  useEffect(() => {
-    fetch(apiUrl("/api/v1/skills"))
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error: ${res.status}`);
-        }
-
-        return res.json();
-      })
-      .then((data) => {
-        setSkillGroups(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to load skills:", err);
-        setError("Unable to load skills.");
-        setLoading(false);
-      });
-  }, []);
+  const skillGroups = portfolio.skills;
 
   return (
     <section className="sk">
@@ -141,14 +120,15 @@ export default function Skills() {
                   <h2 className="sk-h">{group.title}</h2>
 
                   <ul className="sk-list">
-                    {group.skills.map((item) => (
-                      <Skill
-                        key={item.id}
-                        name={item.name}
-                        icon={item.icon}
-                        abbr={item.abbr}
-                      />
-                    ))}
+                    {Array.isArray(group.skills) &&
+                      group.skills.map((item) => (
+                        <Skill
+                          key={item.id}
+                          name={item.name}
+                          icon={item.icon}
+                          abbr={item.abbr}
+                        />
+                      ))}
                   </ul>
                 </section>
               ))}
@@ -186,4 +166,3 @@ export default function Skills() {
     </section>
   );
 }
-

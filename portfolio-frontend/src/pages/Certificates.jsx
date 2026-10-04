@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { apiUrl } from "../api/api";
+import { useState } from "react";
+import { usePortfolio } from "../context/PortfolioContext";
 import { FiExternalLink } from "react-icons/fi";
 import "./Certificates.css";
 
@@ -28,29 +28,9 @@ function Badge({ cert }) {
 }
 
 export default function Certificates() {
-  const [certificates, setCertificates] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { portfolio, loading, error } = usePortfolio();
 
-  useEffect(() => {
-    fetch(apiUrl("/api/v1/certificates"))
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error: ${res.status}`);
-        }
-
-        return res.json();
-      })
-      .then((data) => {
-        setCertificates(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to load certificates:", err);
-        setError("Unable to load certificates.");
-        setLoading(false);
-      });
-  }, []);
+  const certificates = portfolio.certificates;
 
   return (
     <section className="ce">

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { apiUrl } from "../api/api";
+import { useState } from "react";
+import { usePortfolio } from "../context/PortfolioContext";
 import "./Experience.css";
 
 const PHOTO = "/experience.jpg";
@@ -20,30 +20,11 @@ function Logo({ src, initials }) {
 }
 
 export default function Experience() {
-  const [experience, setExperience] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { portfolio, loading, error } = usePortfolio();
+
+  const experience = portfolio.experience;
 
   const [photoOk, setPhotoOk] = useState(true);
-
-  useEffect(() => {
-    fetch(apiUrl("/api/v1/experience"))
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setExperience(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to load experience:", err);
-        setError("Unable to load experience data.");
-        setLoading(false);
-      });
-  }, []);
 
   return (
     <section className="ex">
