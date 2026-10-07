@@ -24,65 +24,41 @@ export function PortfolioProvider({ children }) {
         setLoading(true);
         setError("");
 
-        const [
-          projectsResponse,
-          skillsResponse,
-          educationResponse,
-          experienceResponse,
-          certificatesResponse,
-          blogResponse,
-        ] = await Promise.all([
-          fetch(apiUrl("/api/v1/projects")),
-          fetch(apiUrl("/api/v1/skills")),
-          fetch(apiUrl("/api/v1/education")),
-          fetch(apiUrl("/api/v1/experience")),
-          fetch(apiUrl("/api/v1/certificates")),
-          fetch(apiUrl("/api/v1/blog")),
-        ]);
+        const response = await fetch(apiUrl("/api/v1/portfolio"));
 
-        if (
-          !projectsResponse.ok ||
-          !skillsResponse.ok ||
-          !educationResponse.ok ||
-          !experienceResponse.ok ||
-          !certificatesResponse.ok ||
-          !blogResponse.ok
-        ) {
+        if (!response.ok) {
           throw new Error("Failed to load portfolio data");
         }
 
-        const [
-          projects,
-          skills,
-          education,
-          experience,
-          certificates,
-          blog,
-        ] = await Promise.all([
-          projectsResponse.json(),
-          skillsResponse.json(),
-          educationResponse.json(),
-          experienceResponse.json(),
-          certificatesResponse.json(),
-          blogResponse.json(),
-        ]);
+        const data = await response.json();
 
         if (!cancelled) {
-  setPortfolio({
-    projects: Array.isArray(projects) ? projects : [],
-    skills: Array.isArray(skills) ? skills : [],
-    education: Array.isArray(education) ? education : [],
-    experience: Array.isArray(experience) ? experience : [],
-    certificates: Array.isArray(certificates)
-      ? certificates
-      : [],
-    blog: Array.isArray(blog)
-      ? blog
-      : Array.isArray(blog?.content)
-        ? blog.content
-        : [],
-  });
-}
+          setPortfolio({
+            projects: Array.isArray(data.projects)
+              ? data.projects
+              : [],
+
+            skills: Array.isArray(data.skills)
+              ? data.skills
+              : [],
+
+            education: Array.isArray(data.education)
+              ? data.education
+              : [],
+
+            experience: Array.isArray(data.experience)
+              ? data.experience
+              : [],
+
+            certificates: Array.isArray(data.certificates)
+              ? data.certificates
+              : [],
+
+            blog: Array.isArray(data.blog)
+              ? data.blog
+              : [],
+          });
+        }
       } catch (err) {
         console.error("Portfolio data loading failed:", err);
 
