@@ -206,40 +206,48 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth ->
                         auth
-
+                                // Permit actuator endpoints for monitoring
                                 .requestMatchers(
                                         "/actuator/health",
                                         "/actuator/info"
                                 )
                                 .permitAll()
 
+                                // Explicitly allow the Render keep-alive ping endpoint first
+                                .requestMatchers(
+                                        "/api/v1/ping"
+                                )
+                                .permitAll()
+
+                                // Permit login authentication
                                 .requestMatchers(
                                         "/api/v1/auth/login"
                                 )
                                 .permitAll()
 
-                                // Admin endpoints require ADMIN role.
-                                .requestMatchers(
-                                        "/api/v1/admin/**"
-                                )
-                                .hasRole("ADMIN")
-
-                                // Public GET endpoints.
-                                .requestMatchers(
-                                        org.springframework.http.HttpMethod.GET,
-                                        "/api/v1/**"
-                                )
-                                .permitAll()
-
-                                // Public contact form.
+                                // Public contact form submission (assuming POST /api/v1/contact)
                                 .requestMatchers(
                                         org.springframework.http.HttpMethod.POST,
                                         "/api/v1/contact"
                                 )
                                 .permitAll()
 
+                                // Admin endpoints require ADMIN role
+                                .requestMatchers(
+                                        "/api/v1/admin/**"
+                                )
+                                .hasRole("ADMIN")
+
+                                // Public GET endpoints for portfolio viewing
+                                .requestMatchers(
+                                        org.springframework.http.HttpMethod.GET,
+                                        "/api/v1/**"
+                                )
+                                .permitAll()
+
+                                // Secure everything else
                                 .anyRequest()
-                                .denyAll()
+                                .authenticated()
                 )
 
                 .oauth2ResourceServer(oauth2 ->
@@ -253,3 +261,78 @@ public class SecurityConfig {
         return http.build();
     }
 }
+
+//    @Bean
+//    public SecurityFilterChain filterChain(
+//            HttpSecurity http,
+//            JwtAuthenticationConverter jwtAuthenticationConverter,
+//            CorsConfigurationSource corsConfigurationSource)
+//            throws Exception {
+//
+//        http
+//                .cors(cors ->
+//                        cors.configurationSource(
+//                                corsConfigurationSource
+//                        )
+//                )
+//
+//                .csrf(AbstractHttpConfigurer::disable)
+//
+//                .sessionManagement(session ->
+//                        session.sessionCreationPolicy(
+//                                SessionCreationPolicy.STATELESS
+//                        )
+//                )
+//
+//                .authorizeHttpRequests(auth ->
+//                        auth
+//
+//                                .requestMatchers(
+//                                        "/actuator/health",
+//                                        "/actuator/info"
+//                                )
+//                                .permitAll()
+//
+//                                .requestMatchers(
+//                                        "/api/v1/auth/login"
+//                                )
+//                                .permitAll()
+//
+//                                // Admin endpoints require ADMIN role.
+//                                .requestMatchers(
+//                                        "/api/v1/admin/**"
+//                                )
+//                                .hasRole("ADMIN")
+//
+//                                // Public GET endpoints.
+//                                .requestMatchers(
+//                                        org.springframework.http.HttpMethod.GET,
+//                                        "/api/v1/**"
+//                                )
+//                                .permitAll()
+//                                .requestMatchers(
+//                                        org.springframework.http.HttpMethod.GET,
+//                                        "/api/v1/ping"
+//                                ).permitAll()
+//                                // Public contact form.
+//                                .requestMatchers(
+//                                        org.springframework.http.HttpMethod.POST,
+//                                        "/api/v1/contact"
+//                                )
+//                                .permitAll()
+//
+//                                .anyRequest()
+//                                .denyAll()
+//                )
+//
+//                .oauth2ResourceServer(oauth2 ->
+//                        oauth2.jwt(jwt ->
+//                                jwt.jwtAuthenticationConverter(
+//                                        jwtAuthenticationConverter
+//                                )
+//                        )
+//                );
+//
+//        return http.build();
+//    }
+//}
