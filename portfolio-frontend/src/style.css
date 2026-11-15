@@ -89,10 +89,39 @@ body {
   height: 7px;
   border-radius: 50%;
   background: #e19a19;
+  transition: background-color 0.2s ease;
 }
 
 .pf-sync-live .pf-sync-dot {
   background: #2f9e63;
+}
+
+.pf-sync-loading .pf-sync-dot {
+  background: #3b82f6;
+  animation: pf-sync-pulse 1.4s ease-in-out infinite;
+}
+
+.pf-sync-cached .pf-sync-dot {
+  background: #8b5cf6;
+}
+
+.pf-sync-fallback .pf-sync-dot {
+  background: #e19a19;
+}
+
+.pf-sync-error .pf-sync-dot {
+  background: #ef4444;
+}
+
+@keyframes pf-sync-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(1.3);
+  }
 }
 
 @media (max-width: 640px) {
