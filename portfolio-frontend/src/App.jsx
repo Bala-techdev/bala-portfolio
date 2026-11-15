@@ -42,19 +42,55 @@ function readRoute(pathname) {
 
 function SyncStatusBadge() {
   const { syncStatus, syncError } = usePortfolio();
-  const isLive = syncStatus === "live";
+
+  let label;
+  let statusClass;
+
+  switch (syncStatus) {
+    case "loading":
+      label = "Connecting...";
+      statusClass = "pf-sync-loading";
+      break;
+    case "live":
+      label = "Live Synced";
+      statusClass = "pf-sync-live";
+      break;
+    case "cached":
+      label = "Cached View";
+      statusClass = "pf-sync-cached";
+      break;
+    case "fallback":
+      label = "Fallback View";
+      statusClass = "pf-sync-fallback";
+      break;
+    case "error":
+      label = "Sync Error";
+      statusClass = "pf-sync-error";
+      break;
+    default:
+      label = "Connecting...";
+      statusClass = "pf-sync-loading";
+  }
+
+  const tooltip =
+    syncError ||
+    (syncStatus === "live"
+      ? "Successfully connected to Spring Boot API"
+      : syncStatus === "loading"
+      ? "Connecting to backend (waking up server)..."
+      : syncStatus === "fallback"
+      ? "Displaying local static data because backend API request failed"
+      : "Displaying cached portfolio data");
 
   return (
     <div
-      className={`pf-sync-badge ${
-        isLive ? "pf-sync-live" : "pf-sync-cached"
-      }`}
-      title={syncError || undefined}
+      className={`pf-sync-badge ${statusClass}`}
+      title={tooltip}
       role="status"
       aria-live="polite"
     >
       <span className="pf-sync-dot" aria-hidden="true" />
-      {isLive ? "Live Synced" : "Cached View"}
+      {label}
     </div>
   );
 }
