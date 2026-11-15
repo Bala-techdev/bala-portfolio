@@ -142,46 +142,36 @@ public class SecurityConfig {
 
         String origins = env.getProperty(
                 "app.cors.allowed-origins",
-                "http://localhost:5173"
+                "http://localhost:5173,https://bala-portfolio-teal.vercel.app,https://bala-portfolio-*.vercel.app"
         );
+
+        List<String> allowedOrigins = java.util.Arrays.stream(origins.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isEmpty())
+                .toList();
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(
-                List.of(origins.split(","))
-        );
+        // Supports exact origins and Vercel preview URL patterns.
+        config.setAllowedOriginPatterns(allowedOrigins);
 
         config.setAllowedMethods(
-                List.of(
-                        "GET",
-                        "POST",
-                        "PUT",
-                        "PATCH",
-                        "DELETE",
-                        "OPTIONS"
-                )
+                List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
         );
 
-        config.setAllowedHeaders(
-                List.of(
-                        "Authorization",
-                        "Content-Type"
-                )
-        );
+        config.setAllowedHeaders(List.of("*"));
 
         config.setAllowCredentials(true);
+
+        config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
 
-        source.registerCorsConfiguration(
-                "/**",
-                config
-        );
+        source.registerCorsConfiguration("/**", config);
 
         return source;
     }
-
     @Bean
     public SecurityFilterChain filterChain(
             HttpSecurity http,
@@ -206,6 +196,13 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth ->
                         auth
+
+
+                                .requestMatchers(
+                                        org.springframework.http.HttpMethod.OPTIONS,
+                                        "/**"
+                                )
+                                .permitAll()
                                 // Permit actuator endpoints for monitoring
                                 .requestMatchers(
                                         "/actuator/health",
