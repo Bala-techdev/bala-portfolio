@@ -19,7 +19,6 @@ const Certificates = lazy(() => import("./pages/Certificates"));
 const Resume = lazy(() => import("./pages/Resume"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
-const Research = lazy(() => import("./pages/Research"));
 const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
@@ -140,8 +139,6 @@ export default function App() {
     );
   } else if (section === "blog") {
     content = <Blog onOpenPost={openPost} />;
-  } else if (section === "research") {
-    content = <Research />;
   } else if (PAGES[section]) {
     const Page = PAGES[section];
     content = <Page onNavigate={goTo} />;
