@@ -1,5 +1,6 @@
 package com.balatechdev.portfolio.config;
 
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
@@ -7,11 +8,16 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,8 +36,8 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
@@ -57,18 +63,14 @@ public class SecurityConfig {
             UserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder) {
 
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(passwordEncoder);
-
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(passwordEncoder);
         provider.setUserDetailsService(userDetailsService);
-
         return provider;
     }
 
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
-
         return config.getAuthenticationManager();
     }
 
@@ -79,12 +81,8 @@ public class SecurityConfig {
 
     @Bean
     public JwtEncoder jwtEncoder() {
-        OctetSequenceKey key =
-                new OctetSequenceKey.Builder(jwtSecretKey()).build();
-
-        return new NimbusJwtEncoder(
-                new ImmutableSecret<>(key.toSecretKey())
-        );
+        OctetSequenceKey key = new OctetSequenceKey.Builder(jwtSecretKey()).build();
+        return new NimbusJwtEncoder(new ImmutableSecret<>(key.toSecretKey()));
     }
 
     @Bean
@@ -94,251 +92,77 @@ public class SecurityConfig {
                 .build();
     }
 
-    /*
-     * Reads the "roles" claim and converts roles such as:
-     *
-     * ADMIN
-     *
-     * into:
-     *
-     * ROLE_ADMIN
-     *
-     * This allows:
-     *
-     * @PreAuthorize("hasRole('ADMIN')")
-     *
-     * to work correctly.
-     */
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
-
-        JwtGrantedAuthoritiesConverter authoritiesConverter =
-                new JwtGrantedAuthoritiesConverter();
-
+        JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
         authoritiesConverter.setAuthoritiesClaimName("roles");
         authoritiesConverter.setAuthorityPrefix("");
         authoritiesConverter.setAuthoritiesClaimDelimiter(",");
 
-        SimpleAuthorityMapper roleMapper =
-                new SimpleAuthorityMapper();
-
+        SimpleAuthorityMapper roleMapper = new SimpleAuthorityMapper();
         roleMapper.setPrefix("ROLE_");
 
-        JwtAuthenticationConverter converter =
-                new JwtAuthenticationConverter();
-
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(
-                jwt -> roleMapper.mapAuthorities(
-                        authoritiesConverter.convert(jwt)
-                )
+                jwt -> roleMapper.mapAuthorities(authoritiesConverter.convert(jwt))
         );
-
         return converter;
     }
 
+    // ✅ CRITICAL FIX: Register CorsFilter as a Bean with HIGHEST_PRECEDENCE
     @Bean
-    public CorsConfigurationSource corsConfigurationSource(
-            org.springframework.core.env.Environment env) {
-
+    public FilterRegistrationBean<CorsFilter> corsFilter(Environment env) {
         String origins = env.getProperty(
                 "app.cors.allowed-origins",
-                "http://localhost:5173"
+                "http://localhost:5173,https://bala-portfolio-teal.vercel.app,https://*.vercel.app"
         );
+
+        List<String> allowedOrigins = Arrays.stream(origins.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isEmpty())
+                .toList();
 
         CorsConfiguration config = new CorsConfiguration();
-
-        config.setAllowedOrigins(
-                List.of(origins.split(","))
-        );
-
-        config.setAllowedMethods(
-                List.of(
-                        "GET",
-                        "POST",
-                        "PUT",
-                        "PATCH",
-                        "DELETE",
-                        "OPTIONS"
-                )
-        );
-
-        config.setAllowedHeaders(
-                List.of(
-                        "Authorization",
-                        "Content-Type"
-                )
-        );
-
+        config.setAllowedOriginPatterns(allowedOrigins); // Use Patterns to support wildcards
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization", "Content-Type")); // Helpful for JWT
         config.setAllowCredentials(true);
+        config.setMaxAge(3600L);
 
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
 
-        source.registerCorsConfiguration(
-                "/**",
-                config
-        );
-
-        return source;
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
     }
 
     @Bean
     public SecurityFilterChain filterChain(
             HttpSecurity http,
-            JwtAuthenticationConverter jwtAuthenticationConverter,
-            CorsConfigurationSource corsConfigurationSource)
-            throws Exception {
+            JwtAuthenticationConverter jwtAuthenticationConverter) throws Exception {
 
         http
-                .cors(cors ->
-                        cors.configurationSource(
-                                corsConfigurationSource
-                        )
-                )
-
+                // Enable CORS using the globally registered filter
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS
-                        )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        // ✅ Ensure OPTIONS is permitted immediately
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                        .requestMatchers("/api/v1/ping").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
+                        .requestMatchers("/api/v1/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/contact").permitAll()
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        // Public GET endpoints for portfolio viewing
+                        .requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll()
+                        .anyRequest().authenticated()
                 )
-
-                .authorizeHttpRequests(auth ->
-                        auth
-                                // Permit actuator endpoints for monitoring
-                                .requestMatchers(
-                                        "/actuator/health",
-                                        "/actuator/info"
-                                )
-                                .permitAll()
-
-                                // Explicitly allow the Render keep-alive ping endpoint first
-                                .requestMatchers(
-                                        "/api/v1/ping"
-                                )
-                                .permitAll()
-
-                                .requestMatchers(
-                                        org.springframework.http.HttpMethod.GET,
-                                        "/api/health"
-                                )
-                                .permitAll()
-
-                                // Permit login authentication
-                                .requestMatchers(
-                                        "/api/v1/auth/login"
-                                )
-                                .permitAll()
-
-                                // Public contact form submission (assuming POST /api/v1/contact)
-                                .requestMatchers(
-                                        org.springframework.http.HttpMethod.POST,
-                                        "/api/v1/contact"
-                                )
-                                .permitAll()
-
-                                // Admin endpoints require ADMIN role
-                                .requestMatchers(
-                                        "/api/v1/admin/**"
-                                )
-                                .hasRole("ADMIN")
-
-                                // Public GET endpoints for portfolio viewing
-                                .requestMatchers(
-                                        org.springframework.http.HttpMethod.GET,
-                                        "/api/v1/**"
-                                )
-                                .permitAll()
-
-                                // Secure everything else
-                                .anyRequest()
-                                .authenticated()
-                )
-
-                .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(jwt ->
-                                jwt.jwtAuthenticationConverter(
-                                        jwtAuthenticationConverter
-                                )
-                        )
-                );
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)));
 
         return http.build();
     }
 }
-
-//    @Bean
-//    public SecurityFilterChain filterChain(
-//            HttpSecurity http,
-//            JwtAuthenticationConverter jwtAuthenticationConverter,
-//            CorsConfigurationSource corsConfigurationSource)
-//            throws Exception {
-//
-//        http
-//                .cors(cors ->
-//                        cors.configurationSource(
-//                                corsConfigurationSource
-//                        )
-//                )
-//
-//                .csrf(AbstractHttpConfigurer::disable)
-//
-//                .sessionManagement(session ->
-//                        session.sessionCreationPolicy(
-//                                SessionCreationPolicy.STATELESS
-//                        )
-//                )
-//
-//                .authorizeHttpRequests(auth ->
-//                        auth
-//
-//                                .requestMatchers(
-//                                        "/actuator/health",
-//                                        "/actuator/info"
-//                                )
-//                                .permitAll()
-//
-//                                .requestMatchers(
-//                                        "/api/v1/auth/login"
-//                                )
-//                                .permitAll()
-//
-//                                // Admin endpoints require ADMIN role.
-//                                .requestMatchers(
-//                                        "/api/v1/admin/**"
-//                                )
-//                                .hasRole("ADMIN")
-//
-//                                // Public GET endpoints.
-//                                .requestMatchers(
-//                                        org.springframework.http.HttpMethod.GET,
-//                                        "/api/v1/**"
-//                                )
-//                                .permitAll()
-//                                .requestMatchers(
-//                                        org.springframework.http.HttpMethod.GET,
-//                                        "/api/v1/ping"
-//                                ).permitAll()
-//                                // Public contact form.
-//                                .requestMatchers(
-//                                        org.springframework.http.HttpMethod.POST,
-//                                        "/api/v1/contact"
-//                                )
-//                                .permitAll()
-//
-//                                .anyRequest()
-//                                .denyAll()
-//                )
-//
-//                .oauth2ResourceServer(oauth2 ->
-//                        oauth2.jwt(jwt ->
-//                                jwt.jwtAuthenticationConverter(
-//                                        jwtAuthenticationConverter
-//                                )
-//                        )
-//                );
-//
-//        return http.build();
-//    }
-//}
