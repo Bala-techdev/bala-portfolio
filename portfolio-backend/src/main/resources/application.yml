@@ -1,6 +1,8 @@
 spring:
   application:
     name: portfolio-api
+  config:
+    import: optional:file:.env[.properties]
   main:
     lazy-initialization: true
   profiles:

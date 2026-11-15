@@ -210,6 +210,29 @@ Admin functionality includes management of:
 
 The backend contains separate admin endpoints for protected operations.
 
+## Cloudinary Image Upload Configuration
+
+Project, blog cover and certificate uploads are sent to the backend first.
+The backend uploads them to Cloudinary and returns a permanent URL. Cloudinary
+credentials must never be placed in the React frontend or committed to Git.
+
+Configure these variables in the backend environment:
+
+```text
+CLOUDINARY_CLOUD_NAME
+CLOUDINARY_API_KEY
+CLOUDINARY_API_SECRET
+CLOUDINARY_FOLDER=portfolio/projects
+```
+
+For local development, export the variables before starting Spring Boot or
+copy `portfolio-backend/.env.example` to `portfolio-backend/.env` and replace
+the empty values. The local `.env` file is ignored by Git.
+
+For Render staging and production, add the same variables to each backend
+service's Environment settings independently. Do not copy production values
+into local or staging configuration.
+
 ---
 
 # 🏗️ System Architecture

@@ -4,6 +4,7 @@ import com.balatechdev.portfolio.config.CloudinaryProperties;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,11 +36,12 @@ public class ProjectImageService {
     public ImageUploadResponse upload(MultipartFile file) {
         validate(file);
 
-        if (isBlank(properties.cloudName())
-                || isBlank(properties.apiKey())
-                || isBlank(properties.apiSecret())) {
+        List<String> missingVariables = properties.missingEnvironmentVariables();
+        if (!missingVariables.isEmpty()) {
             throw new ImageStorageException(
-                    "Cloudinary storage is not configured for this environment.",
+                    "Cloudinary storage is not configured. Set these backend environment variables: "
+                            + String.join(", ", missingVariables)
+                            + ". Do not add them to the React frontend.",
                     null);
         }
 
@@ -86,7 +88,7 @@ public class ProjectImageService {
                 throw storageException;
             }
             throw new ImageStorageException(
-                    "Unable to store the project image.",
+                    "Cloudinary upload failed. Verify the backend Cloudinary credentials and account configuration.",
                     exception);
         }
     }
