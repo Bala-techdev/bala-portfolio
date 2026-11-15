@@ -1,0 +1,2 @@
+ALTER TABLE projects
+    ADD COLUMN status VARCHAR(40) NOT NULL DEFAULT 'Active';

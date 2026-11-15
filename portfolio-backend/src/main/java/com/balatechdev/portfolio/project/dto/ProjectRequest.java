@@ -44,6 +44,10 @@ public record ProjectRequest(
         @Size(max = 40, message = "Icon must be at most 40 characters")
         String icon,
 
+        @NotBlank(message = "Status is required")
+        @Size(max = 40, message = "Status must be at most 40 characters")
+        String status,
+
         @URL(message = "Live URL must be a valid http(s) address")
         @Size(max = 255, message = "Live URL must be at most 255 characters")
         String liveUrl,
@@ -54,4 +58,41 @@ public record ProjectRequest(
 
         @Min(value = 0, message = "Display order must be 0 or greater")
         Integer displayOrder) {
+
+    /**
+     * Keeps the pre-status Java construction API compatible for existing
+     * service tests and internal callers.
+     */
+    public ProjectRequest(
+            String slug,
+            String title,
+            String category,
+            String summary,
+            String tagline,
+            String overview,
+            List<String> features,
+            List<String> tech,
+            List<String> images,
+            String accent,
+            String icon,
+            String liveUrl,
+            String githubUrl,
+            Integer displayOrder) {
+        this(
+                slug,
+                title,
+                category,
+                summary,
+                tagline,
+                overview,
+                features,
+                tech,
+                images,
+                accent,
+                icon,
+                "Active",
+                liveUrl,
+                githubUrl,
+                displayOrder);
+    }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePortfolio } from "../context/PortfolioContext";
 import { apiUrl } from "../api/api";
 import { FiArrowLeft } from "react-icons/fi";
@@ -6,11 +6,24 @@ import ProjectImage from "../components/ProjectImage";
 import "./Blog.css";
 
 export default function BlogPost({ id, onBack }) {
-  const { loading: portfolioLoading } = usePortfolio();
+  const { portfolio } = usePortfolio();
 
-  const [post, setPost] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const cachedPost = useMemo(
+    () =>
+      portfolio.blog.find(
+        (item) =>
+          String(item.slug ?? item.id) === String(id)
+      ) || null,
+    [id, portfolio.blog]
+  );
+  const [livePost, setLivePost] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const post =
+    livePost &&
+    String(livePost.slug ?? livePost.id) === String(id)
+      ? livePost
+      : cachedPost;
 
   useEffect(() => {
     let cancelled = false;
@@ -19,7 +32,6 @@ export default function BlogPost({ id, onBack }) {
       try {
         setLoading(true);
         setError("");
-        setPost(null);
 
         const response = await fetch(
           apiUrl(`/api/v1/blog/${id}`)
@@ -32,7 +44,7 @@ export default function BlogPost({ id, onBack }) {
         const data = await response.json();
 
         if (!cancelled) {
-          setPost(data);
+          setLivePost(data);
         }
       } catch (err) {
         console.error("Failed to load blog post:", err);
@@ -49,9 +61,6 @@ export default function BlogPost({ id, onBack }) {
 
     if (id) {
       loadPost();
-    } else {
-      setLoading(false);
-      setError("Post not found.");
     }
 
     return () => {
@@ -59,7 +68,7 @@ export default function BlogPost({ id, onBack }) {
     };
   }, [id]);
 
-  if (portfolioLoading || loading) {
+  if (!post && loading) {
     return (
       <section className="bp">
         <button
@@ -78,7 +87,7 @@ export default function BlogPost({ id, onBack }) {
     );
   }
 
-  if (error || !post) {
+  if (!post) {
     return (
       <section className="bp">
         <button

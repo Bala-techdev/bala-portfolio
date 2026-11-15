@@ -34,6 +34,7 @@ const NAV = [
   { id: "certificates", label: "Certificates", icon: FiAward },
   { id: "resume", label: "Resume", icon: FiFile },
   { id: "blog", label: "Blog", icon: FiFileText },
+  { id: "research", label: "Research", icon: FiFileText },
   { id: "contact", label: "Contact", icon: FiMessageCircle },
 ];
 
@@ -44,13 +45,9 @@ export default function Sidebar({ active, onNavigate }) {
     setMobileOpen((open) => !open);
   };
 
-  const closeMobileMenu = () => {
-    setMobileOpen(false);
-  };
-
   const openAdmin = () => {
     setMobileOpen(false);
-    window.location.hash = "/admin";
+    onNavigate("admin");
   };
 
   const navigate = (id) => {

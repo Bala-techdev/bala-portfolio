@@ -4,6 +4,7 @@ import com.balatechdev.portfolio.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "certificates")
@@ -14,6 +15,9 @@ public class Certificate extends BaseEntity {
 
     @Column(nullable = false, length = 100)
     private String issuer;
+
+    @Column(name = "issue_date")
+    private LocalDate issueDate;
 
     @Column(nullable = false)
     private String url;
@@ -37,10 +41,11 @@ public class Certificate extends BaseEntity {
         // for JPA
     }
 
-    public Certificate(String title, String issuer, String url, String logoUrl,
+    public Certificate(String title, String issuer, LocalDate issueDate, String url, String logoUrl,
                        String abbr, String bgColor, String fgColor, int displayOrder) {
         this.title = title;
         this.issuer = issuer;
+        this.issueDate = issueDate;
         this.url = url;
         this.logoUrl = logoUrl;
         this.abbr = abbr;
@@ -49,12 +54,21 @@ public class Certificate extends BaseEntity {
         this.displayOrder = displayOrder;
     }
 
+    public Certificate(String title, String issuer, String url, String logoUrl,
+                       String abbr, String bgColor, String fgColor, int displayOrder) {
+        this(title, issuer, null, url, logoUrl, abbr, bgColor, fgColor, displayOrder);
+    }
+
     public String getTitle() {
         return title;
     }
 
     public String getIssuer() {
         return issuer;
+    }
+
+    public LocalDate getIssueDate() {
+        return issueDate;
     }
 
     public String getUrl() {
@@ -81,10 +95,11 @@ public class Certificate extends BaseEntity {
         return displayOrder;
     }
 
-    public void update(String title, String issuer, String url, String logoUrl,
+    public void update(String title, String issuer, LocalDate issueDate, String url, String logoUrl,
                        String abbr, String bgColor, String fgColor, int displayOrder) {
         this.title = title;
         this.issuer = issuer;
+        this.issueDate = issueDate;
         this.url = url;
         this.logoUrl = logoUrl;
         this.abbr = abbr;

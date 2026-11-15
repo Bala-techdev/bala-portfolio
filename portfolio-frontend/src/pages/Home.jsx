@@ -1,29 +1,22 @@
 import { useState } from "react";
-import { FiArrowRight, FiDownload, FiImage } from "react-icons/fi";
+import {
+  FiArrowRight,
+  FiDownload,
+  FiGithub,
+  FiImage,
+  FiLinkedin,
+  FiMail,
+} from "react-icons/fi";
 import { usePortfolio } from "../context/PortfolioContext";
 
-/* EDIT YOUR DETAILS HERE */
-const NAME = "Bala S";
-const ROLE = "Full Stack Developer | Problem Solver | Lifelong Learner";
-const BIO =
-  "I build scalable web applications, explore AI, and turn ideas into real-world solutions.";
 const PHOTO = "/profile.png"; // put your image in the "public" folder
 const RESUME = "/resume.pdf"; // put your resume in the "public" folder
 
 export default function Home({ onNavigate }) {
   const { portfolio } = usePortfolio();
+  const { profile } = portfolio;
 
   const [photoOk, setPhotoOk] = useState(true);
-
-  const stats = [
-    { value: "3+", label: "Years of Learning" },
-    {
-      value: `${portfolio.projects.length}+`,
-      label: "Projects Completed",
-    },
-    { value: "500+", label: "DSA Problems Solved" },
-    { value: "∞", label: "Ideas to Build" },
-  ];
 
   return (
     <>
@@ -35,13 +28,15 @@ export default function Home({ onNavigate }) {
           </p>
 
           <h1 className="pf-title">
-            <span className="pf-hi">Hi, I&apos;m</span>
-            <span className="pf-name">{NAME}</span>
+            <span className="pf-hi">Hello, I&apos;m</span>
+            <span className="pf-name">{profile.name.toUpperCase()}</span>
           </h1>
 
-          <p className="pf-role">{ROLE}</p>
+          <p className="pf-role">{profile.role}</p>
 
-          <p className="pf-bio">{BIO}</p>
+          <p className="pf-bio">
+            {profile.bio}
+          </p>
 
           <div className="pf-actions">
             <button
@@ -49,7 +44,7 @@ export default function Home({ onNavigate }) {
               className="pf-btn pf-btn-dark"
               onClick={() => onNavigate("projects")}
             >
-              View My Work <FiArrowRight aria-hidden="true" />
+              View Projects <FiArrowRight aria-hidden="true" />
             </button>
 
             <a
@@ -58,6 +53,26 @@ export default function Home({ onNavigate }) {
               download
             >
               Download Resume <FiDownload aria-hidden="true" />
+            </a>
+
+            <button
+              type="button"
+              className="pf-btn pf-btn-line"
+              onClick={() => onNavigate("contact")}
+            >
+              Contact Me <FiMail aria-hidden="true" />
+            </button>
+          </div>
+
+          <div className="pf-hero-socials" aria-label="Social links">
+            <a href={profile.socials.github} target="_blank" rel="noreferrer">
+              <FiGithub aria-hidden="true" /> GitHub
+            </a>
+            <a href={profile.socials.linkedin} target="_blank" rel="noreferrer">
+              <FiLinkedin aria-hidden="true" /> LinkedIn
+            </a>
+            <a href={profile.socials.email}>
+              <FiMail aria-hidden="true" /> Email
             </a>
           </div>
         </div>
@@ -70,7 +85,9 @@ export default function Home({ onNavigate }) {
             <img
               className="pf-photo"
               src={PHOTO}
-              alt={`Portrait of ${NAME}`}
+              alt={`Portrait of ${profile.name}`}
+              decoding="async"
+              fetchPriority="high"
               onError={() => setPhotoOk(false)}
             />
           ) : (
@@ -105,13 +122,14 @@ export default function Home({ onNavigate }) {
         </div>
       </section>
 
-      <section className="pf-stats" aria-label="Highlights">
-        {stats.map((stat) => (
-          <div className="pf-stat" key={stat.label}>
-            <span className="pf-num">{stat.value}</span>
-            <span className="pf-label">{stat.label}</span>
-          </div>
-        ))}
+      <section className="pf-stats" aria-label="Engineering focus">
+        {["Java & Spring Boot", "React.js", "Secure Applications", "AI Exploration"].map(
+          (focus) => (
+            <div className="pf-stat" key={focus}>
+              <span className="pf-label">{focus}</span>
+            </div>
+          )
+        )}
       </section>
     </>
   );

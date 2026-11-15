@@ -63,6 +63,10 @@ export default function ProjectCard({ project, onOpen }) {
           )}
         </div>
 
+        {project.status && (
+          <span className="pc-status">{project.status}</span>
+        )}
+
         <p className="pc-desc">
           {project.summary}
         </p>

@@ -79,7 +79,7 @@ const TECH = {
 };
 
 export default function ProjectDetail({ id, onBack }) {
-  const { portfolio, loading, error: portfolioError } = usePortfolio();
+  const { portfolio, syncError: portfolioError } = usePortfolio();
 
   const [project, setProject] = useState(null);
   const [error, setError] = useState("");
@@ -92,12 +92,10 @@ export default function ProjectDetail({ id, onBack }) {
    * No additional API request is made here.
    */
   useEffect(() => {
-    if (loading) {
-      return;
-    }
-
     const foundProject = portfolio.projects.find(
-      (item) => String(item.id) === String(id)
+      (item) =>
+        String(item.id) === String(id) ||
+        String(item.slug) === String(id)
     );
 
     if (foundProject) {
@@ -107,7 +105,7 @@ export default function ProjectDetail({ id, onBack }) {
       setProject(null);
       setError("Project not found.");
     }
-  }, [id, loading, portfolio.projects]);
+  }, [id, portfolio.projects]);
 
   // Reset gallery when project changes
   useEffect(() => {
@@ -117,25 +115,6 @@ export default function ProjectDetail({ id, onBack }) {
   // =========================
   // Loading
   // =========================
-
-  if (loading) {
-    return (
-      <section className="pd">
-        <button
-          type="button"
-          className="pd-back"
-          onClick={onBack}
-        >
-          <FiArrowLeft aria-hidden="true" />
-          Back to Projects
-        </button>
-
-        <p className="pd-tagline">
-          Loading project...
-        </p>
-      </section>
-    );
-  }
 
   // =========================
   // Error / Not Found
@@ -300,6 +279,44 @@ export default function ProjectDetail({ id, onBack }) {
               </p>
             </section>
           )}
+
+          {project.problemStatement && (
+            <section>
+              <h2 className="pd-h2">Problem Statement</h2>
+              <p className="pd-overview">{project.problemStatement}</p>
+            </section>
+          )}
+
+          {project.architecture && (
+            <section>
+              <h2 className="pd-h2">Architecture</h2>
+              <p className="pd-overview">{project.architecture}</p>
+            </section>
+          )}
+
+          {project.status && (
+            <section>
+              <h2 className="pd-h2">Project Status</h2>
+              <p className="pd-status">{project.status}</p>
+            </section>
+          )}
+
+          {Array.isArray(project.engineeringHighlights) &&
+            project.engineeringHighlights.length > 0 && (
+              <section>
+                <h2 className="pd-h2">Engineering Highlights</h2>
+                <ul className="pd-features">
+                  {project.engineeringHighlights.map((highlight, index) => (
+                    <li key={`${highlight}-${index}`}>
+                      <span className="pd-check" aria-hidden="true">
+                        <FiCheck />
+                      </span>
+                      {highlight}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
           {/* Features */}
 

@@ -47,6 +47,8 @@ export default function About() {
                 className="ab-img"
                 src={PHOTO}
                 alt="Portrait of Bala S"
+                loading="lazy"
+                decoding="async"
                 onError={() => setPhotoOk(false)}
               />
             ) : (

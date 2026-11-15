@@ -19,7 +19,9 @@ function Badge({ cert }) {
       ) : (
         <img
           src={cert.logoUrl}
-          alt=""
+          alt={`${cert.issuer} logo`}
+          loading="lazy"
+          decoding="async"
           onError={() => setFailed(true)}
         />
       )}
@@ -28,7 +30,7 @@ function Badge({ cert }) {
 }
 
 export default function Certificates() {
-  const { portfolio, loading, error } = usePortfolio();
+  const { portfolio } = usePortfolio();
 
   const certificates = portfolio.certificates;
 
@@ -40,41 +42,45 @@ export default function Certificates() {
         Courses and certifications I have completed.
       </p>
 
-      {loading && (
-        <p>Loading certificates...</p>
-      )}
-
-      {error && (
-        <p>{error}</p>
-      )}
-
-      {!loading && !error && (
-        <ul className="ce-list">
+      <ul className="ce-list">
           {certificates.map((cert) => (
             <li key={cert.id}>
-              <a
-                className="ce-row"
-                href={cert.url}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`${cert.title} by ${cert.issuer} (opens in a new tab)`}
-              >
+              {cert.url ? (
+                <a
+                  className="ce-row"
+                  href={cert.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`${cert.title} by ${cert.issuer} (opens in a new tab)`}
+                >
+                  <Badge cert={cert} />
+
+                  <span className="ce-text">
+                    <strong>{cert.title}</strong>
+                    <small>{cert.issuer}</small>
+                  </span>
+
+                  <FiExternalLink
+                    className="ce-open"
+                    aria-hidden="true"
+                  />
+                </a>
+              ) : (
+                <div
+                  className="ce-row ce-row-unverified"
+                  aria-label={`${cert.title} by ${cert.issuer}; verification link pending`}
+                >
                 <Badge cert={cert} />
 
                 <span className="ce-text">
                   <strong>{cert.title}</strong>
-                  <small>{cert.issuer}</small>
+                  <small>{cert.issuer} · Verification link pending</small>
                 </span>
-
-                <FiExternalLink
-                  className="ce-open"
-                  aria-hidden="true"
-                />
-              </a>
+                </div>
+              )}
             </li>
           ))}
-        </ul>
-      )}
+      </ul>
     </section>
   );
 }

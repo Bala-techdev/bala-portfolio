@@ -3,6 +3,8 @@ package com.balatechdev.portfolio.project;
 import com.balatechdev.portfolio.common.exception.ConflictException;
 import com.balatechdev.portfolio.common.exception.ResourceNotFoundException;
 import com.balatechdev.portfolio.common.util.SlugUtil;
+import com.balatechdev.portfolio.image.ProjectImageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.balatechdev.portfolio.project.dto.ProjectMapper;
 import com.balatechdev.portfolio.project.dto.ProjectRequest;
 import com.balatechdev.portfolio.project.dto.ProjectResponse;
@@ -15,9 +17,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProjectService {
 
     private final ProjectRepository repository;
+    private final ProjectImageService imageService;
 
     public ProjectService(ProjectRepository repository) {
         this.repository = repository;
+        this.imageService = null;
+    }
+
+    @Autowired
+    public ProjectService(ProjectRepository repository, ProjectImageService imageService) {
+        this.repository = repository;
+        this.imageService = imageService;
     }
 
     // category = null, blank or "All" returns every project
@@ -52,11 +62,14 @@ public class ProjectService {
                 request.githubUrl(),
                 request.accent(),
                 request.icon(),
+                request.status(),
                 request.displayOrder() != null ? request.displayOrder() : 0,
                 orEmpty(request.features()),
                 orEmpty(request.tech()),
                 orEmpty(request.images()));
-        return ProjectMapper.toResponse(repository.save(entity));
+        Project saved = repository.save(entity);
+        attachImages(saved);
+        return ProjectMapper.toResponse(saved);
     }
 
     @Transactional
@@ -80,10 +93,12 @@ public class ProjectService {
                 request.githubUrl(),
                 request.accent(),
                 request.icon(),
+                request.status(),
                 request.displayOrder() != null ? request.displayOrder() : entity.getDisplayOrder(),
                 orEmpty(request.features()),
                 orEmpty(request.tech()),
                 orEmpty(request.images()));
+        attachImages(entity);
         return ProjectMapper.toResponse(entity);
     }
 
@@ -103,5 +118,11 @@ public class ProjectService {
 
     private static List<String> orEmpty(List<String> list) {
         return list == null ? List.of() : list;
+    }
+
+    private void attachImages(Project project) {
+        if (imageService != null) {
+            imageService.attachToProject(project.getId(), project.getImages());
+        }
     }
 }

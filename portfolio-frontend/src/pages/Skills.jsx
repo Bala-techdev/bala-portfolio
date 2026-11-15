@@ -89,7 +89,7 @@ function Skill({ name, icon, abbr }) {
 }
 
 export default function Skills() {
-  const { portfolio, loading, error } = usePortfolio();
+  const { portfolio } = usePortfolio();
 
   const skillGroups = portfolio.skills;
 
@@ -105,13 +105,7 @@ export default function Skills() {
           </p>
 
           <div className="sk-groups">
-            {loading && <p>Loading skills...</p>}
-
-            {error && <p>{error}</p>}
-
-            {!loading &&
-              !error &&
-              skillGroups.map((group) => (
+            {skillGroups.map((group) => (
                 <section
                   className="sk-group"
                   key={group.id}

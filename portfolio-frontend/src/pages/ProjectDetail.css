@@ -149,6 +149,14 @@
   color: #4b5563;
 }
 
+.pd-status {
+  margin: 0;
+  color: var(--pf-accent, #3d5afe);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
 .pd-features {
   display: grid;
   gap: 12px;

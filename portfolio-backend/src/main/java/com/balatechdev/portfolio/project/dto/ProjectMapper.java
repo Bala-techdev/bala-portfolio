@@ -22,6 +22,7 @@ public final class ProjectMapper {
                 List.copyOf(entity.getImages()),
                 entity.getAccent(),
                 entity.getIcon(),
+                entity.getStatus(),
                 entity.getLiveUrl(),
                 entity.getGithubUrl(),
                 entity.getDisplayOrder(),

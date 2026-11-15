@@ -1,6 +1,8 @@
 package com.balatechdev.portfolio.common.exception;
 
 
+import com.balatechdev.portfolio.image.ImageStorageException;
+import com.balatechdev.portfolio.image.ImageValidationException;
 import jakarta.validation.ConstraintViolationException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 /**
  * Turns every exception into the same JSON shape (RFC 9457 "Problem Details").
@@ -55,6 +58,35 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setTitle("Conflict");
         return problem;
+    }
+
+    @ExceptionHandler(ImageValidationException.class)
+    public ProblemDetail handleImageValidation(ImageValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setTitle("Invalid image");
+        return problem;
+    }
+
+    @ExceptionHandler(ImageStorageException.class)
+    public ProblemDetail handleImageStorage(ImageStorageException ex) {
+        log.error("Image storage failure", ex);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_GATEWAY, ex.getMessage());
+        problem.setTitle("Image storage unavailable");
+        return problem;
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMaxUploadSizeExceededException(
+            MaxUploadSizeExceededException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST, "Files must be 10 MB or smaller.");
+        problem.setTitle("Image too large");
+        return handleExceptionInternal(ex, problem, headers, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)

@@ -12,6 +12,7 @@ public final class CertificateMapper {
                 entity.getId(),
                 entity.getTitle(),
                 entity.getIssuer(),
+                entity.getIssueDate(),
                 entity.getUrl(),
                 entity.getLogoUrl(),
                 entity.getAbbr(),

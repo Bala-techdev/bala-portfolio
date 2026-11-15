@@ -4,10 +4,10 @@ import { FiArrowRight } from "react-icons/fi";
 import ProjectImage from "../components/ProjectImage";
 import "./Blog.css";
 
-const ALL_POSTS_URL = "https://medium.com/@your-username";
+const ALL_POSTS_URL = "https://github.com/bala-techdev/bala-portfolio";
 
 export default function Blog({ onOpenPost }) {
-  const { portfolio, loading, error } = usePortfolio();
+  const { portfolio } = usePortfolio();
 
   const posts = useMemo(() => {
     const blogData = portfolio.blog;
@@ -54,16 +54,11 @@ export default function Blog({ onOpenPost }) {
           target="_blank"
           rel="noreferrer"
         >
-          View All Posts
+          View Source
         </a>
       </div>
 
-      {loading && <p>Loading blog posts...</p>}
-
-      {error && <p>{error}</p>}
-
-      {!loading && !error && (
-        <div className="bl-grid">
+      <div className="bl-grid">
           {posts.map((post) => (
             <article
               className="bl-card"
@@ -102,8 +97,7 @@ export default function Blog({ onOpenPost }) {
               </div>
             </article>
           ))}
-        </div>
-      )}
+      </div>
     </section>
   );
 }
