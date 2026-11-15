@@ -34,14 +34,16 @@ export default function BlogPost({ id, onBack }) {
         setLoading(true);
         setError("");
 
-        const response = await fetch(apiUrl(`/api/v1/blog/${id}`), {
+        const response = await fetch(
+          apiUrl(`/api/v1/blog/${id}?ts=${Date.now()}`),
+          {
           cache: "no-store",
           headers: {
             Accept: "application/json",
-            "Cache-Control": "no-cache",
           },
           signal: controller.signal,
-        });
+          }
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error: ${response.status}`);

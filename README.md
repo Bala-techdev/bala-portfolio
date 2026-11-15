@@ -233,6 +233,17 @@ For Render staging and production, add the same variables to each backend
 service's Environment settings independently. Do not copy production values
 into local or staging configuration.
 
+## Vercel API Configuration
+
+The Vercel frontend must define `VITE_API_URL` in the Vercel project
+environment settings. Set the isolated Render staging API URL for Preview
+deployments and the Render production API URL only for Production
+deployments. The variable is compiled into the frontend build, so redeploy
+after changing it.
+
+If this variable is missing from a production build, requests fall back to
+static/session-cached data and the UI displays `Cached View`.
+
 ---
 
 # 🏗️ System Architecture
