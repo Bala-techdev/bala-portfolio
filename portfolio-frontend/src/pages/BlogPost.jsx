@@ -27,15 +27,21 @@ export default function BlogPost({ id, onBack }) {
 
   useEffect(() => {
     let cancelled = false;
+    const controller = new AbortController();
 
     const loadPost = async () => {
       try {
         setLoading(true);
         setError("");
 
-        const response = await fetch(
-          apiUrl(`/api/v1/blog/${id}`)
-        );
+        const response = await fetch(apiUrl(`/api/v1/blog/${id}`), {
+          cache: "no-store",
+          headers: {
+            Accept: "application/json",
+            "Cache-Control": "no-cache",
+          },
+          signal: controller.signal,
+        });
 
         if (!response.ok) {
           throw new Error(`HTTP error: ${response.status}`);
@@ -47,9 +53,11 @@ export default function BlogPost({ id, onBack }) {
           setLivePost(data);
         }
       } catch (err) {
-        console.error("Failed to load blog post:", err);
+        if (err.name !== "AbortError") {
+          console.error("Failed to load blog post:", err);
+        }
 
-        if (!cancelled) {
+        if (!cancelled && err.name !== "AbortError") {
           setError("Unable to load this blog post.");
         }
       } finally {
@@ -65,6 +73,7 @@ export default function BlogPost({ id, onBack }) {
 
     return () => {
       cancelled = true;
+      controller.abort();
     };
   }, [id]);
 

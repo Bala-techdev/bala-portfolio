@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiUrl } from "../api/api";
 import "./AdminLogin.css";
 
 export default function AdminLogin({ onLogin }) {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -81,9 +83,7 @@ export default function AdminLogin({ onLogin }) {
         <button
           type="button"
           className="admin-back"
-          onClick={() => {
-            window.location.hash = "/";
-          }}
+          onClick={() => navigate("/")}
         >
           ← Back to Portfolio
         </button>
