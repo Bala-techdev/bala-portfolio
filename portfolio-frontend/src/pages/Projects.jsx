@@ -9,10 +9,10 @@ import ProjectCard from "../components/ProjectCard";
 import "./Projects.css";
 
 const PER_PAGE = 3;
-const SOURCE_URL = "https://github.com/your-username";
+const SOURCE_URL = "https://github.com/bala-techdev/bala-portfolio";
 
 export default function Projects({ onOpenProject }) {
-  const { portfolio, loading, error } = usePortfolio();
+  const { portfolio } = usePortfolio();
 
   const projects = portfolio.projects;
 
@@ -86,20 +86,7 @@ export default function Projects({ onOpenProject }) {
         </a>
       </div>
 
-      {loading && (
-        <p className="pj-state">
-          Loading projects...
-        </p>
-      )}
-
-      {error && (
-        <p className="pj-state pj-error">
-          {error}
-        </p>
-      )}
-
-      {!loading && !error && (
-        <>
+      <>
           <div
             className="pj-filters"
             role="group"
@@ -165,8 +152,7 @@ export default function Projects({ onOpenProject }) {
               </button>
             </div>
           )}
-        </>
-      )}
+      </>
     </section>
   );
 }

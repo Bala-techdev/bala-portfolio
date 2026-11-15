@@ -1,25 +1,30 @@
-import { useState, useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Education from "./pages/Education";
-import Projects from "./pages/Projects";
-import ProjectDetail from "./pages/ProjectDetail";
-import Experience from "./pages/Experience";
-import Skills from "./pages/Skills";
-import Certificates from "./pages/Certificates";
-import Resume from "./pages/Resume";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import Contact from "./pages/Contact";
-import NotFound from "./pages/NotFound";
-import AdminLogin from "./pages/AdminLogin";
-import AdminDashboard from "./pages/AdminDashboard";
-import { PortfolioProvider } from "./context/PortfolioContext";
+import {
+  PortfolioProvider,
+  usePortfolio,
+} from "./context/PortfolioContext";
 import "./App.css";
 import "./style.css";
 
-// Simple pages: the key is the address, e.g. #/skills
+const Home = lazy(() => import("./pages/Home"));
+const About = lazy(() => import("./pages/About"));
+const Education = lazy(() => import("./pages/Education"));
+const Projects = lazy(() => import("./pages/Projects"));
+const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
+const Experience = lazy(() => import("./pages/Experience"));
+const Skills = lazy(() => import("./pages/Skills"));
+const Certificates = lazy(() => import("./pages/Certificates"));
+const Resume = lazy(() => import("./pages/Resume"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const Research = lazy(() => import("./pages/Research"));
+const Contact = lazy(() => import("./pages/Contact"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+
 const PAGES = {
   home: Home,
   about: About,
@@ -31,89 +36,128 @@ const PAGES = {
   contact: Contact,
 };
 
-// "#/projects/blood-donor-finder" -> { section: "projects", id: "blood-donor-finder" }
-function readRoute() {
-  const [section, id] = window.location.hash.replace(/^#\/?/, "").split("/");
+function readRoute(pathname) {
+  const [section, id] = pathname.replace(/^\/+|\/+$/g, "").split("/");
   return { section: section || "home", id: id || null };
 }
 
-export default function App() {
-  const [route, setRoute] = useState(readRoute);
+function SyncStatusBadge() {
+  const { syncStatus, syncError } = usePortfolio();
+  const isLive = syncStatus === "live";
 
-  useEffect(() => {
-    const onChange = () => setRoute(readRoute());
-    window.addEventListener("hashchange", onChange);
-    return () => window.removeEventListener("hashchange", onChange);
-  }, []);
+  return (
+    <div
+      className={`pf-sync-badge ${
+        isLive ? "pf-sync-live" : "pf-sync-cached"
+      }`}
+      title={syncError || undefined}
+      role="status"
+      aria-live="polite"
+    >
+      <span className="pf-sync-dot" aria-hidden="true" />
+      {isLive ? "Live Synced" : "Cached View"}
+    </div>
+  );
+}
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [route]);
+function AdminRoute({ id, navigate }) {
+  if (id === "login") {
+    return (
+      <AdminLogin
+        onLogin={() => navigate("/admin/dashboard")}
+      />
+    );
+  }
 
-  const navigate = (to) => {
-    window.location.hash = to === "home" ? "/" : `/${to}`;
-  };
-  const openProject = (id) => {
-    window.location.hash = `/projects/${id}`;
-  };
-  const openPost = (id) => {
-    window.location.hash = `/blog/${id}`;
-  };
-
-  const { section, id } = route;
-
-if (section === "admin" && !id) {
-  const token = localStorage.getItem("admin_token");
-
-  window.location.hash = token
-    ? "/admin/dashboard"
-    : "/admin/login";
+  if (id === "dashboard") {
+    return (
+      <AdminDashboard
+        onLogout={() => navigate("/admin/login")}
+      />
+    );
+  }
 
   return null;
 }
 
-if (section === "admin" && id === "login") {
-  return (
-    <AdminLogin
-      onLogin={() => {
-        window.location.hash = "/admin/dashboard";
-      }}
-    />
-  );
-}
+export default function App() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const route = readRoute(location.pathname);
+  const { section, id } = route;
 
-if (section === "admin" && id === "dashboard") {
-  return (
-    <AdminDashboard
-      onLogout={() => {
-        window.location.hash = "/admin/login";
-      }}
-    />
-  );
-}
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
-let content;
+  useEffect(() => {
+    if (section === "admin" && !id) {
+      const token = localStorage.getItem("admin_token");
+      navigate(
+        token ? "/admin/dashboard" : "/admin/login",
+        { replace: true }
+      );
+    }
+  }, [id, navigate, section]);
+
+  const goTo = (to) => {
+    navigate(to === "home" ? "/" : `/${to}`);
+  };
+
+  const openProject = (projectId) => {
+    navigate(`/projects/${projectId}`);
+  };
+
+  const openPost = (postId) => {
+    navigate(`/blog/${postId}`);
+  };
+
+  if (section === "admin") {
+    return (
+      <Suspense fallback={null}>
+        <AdminRoute id={id} navigate={navigate} />
+      </Suspense>
+    );
+  }
+
+  let content;
+
   if (section === "projects" && id) {
-    content = <ProjectDetail id={id} onBack={() => navigate("projects")} />;
+    content = (
+      <ProjectDetail
+        id={id}
+        onBack={() => goTo("projects")}
+      />
+    );
   } else if (section === "projects") {
     content = <Projects onOpenProject={openProject} />;
   } else if (section === "blog" && id) {
-    content = <BlogPost id={id} onBack={() => navigate("blog")} />;
+    content = (
+      <BlogPost
+        id={id}
+        onBack={() => goTo("blog")}
+      />
+    );
   } else if (section === "blog") {
     content = <Blog onOpenPost={openPost} />;
+  } else if (section === "research") {
+    content = <Research />;
   } else if (PAGES[section]) {
     const Page = PAGES[section];
-    content = <Page onNavigate={navigate} />;
+    content = <Page onNavigate={goTo} />;
   } else {
-    content = <NotFound onNavigate={navigate} />;
+    content = <NotFound onNavigate={goTo} />;
   }
 
   return (
     <PortfolioProvider>
-    <div className="pf-app">
-      <Sidebar active={section} onNavigate={navigate} />
-      <main className="pf-main">{content}</main>
-    </div>
-  </PortfolioProvider>
+      <div className="pf-app">
+        <SyncStatusBadge />
+        <Sidebar active={section} onNavigate={goTo} />
+        <main className="pf-main">
+          <Suspense fallback={null}>{content}</Suspense>
+        </main>
+      </div>
+    </PortfolioProvider>
   );
 }

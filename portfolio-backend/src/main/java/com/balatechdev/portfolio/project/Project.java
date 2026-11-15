@@ -47,6 +47,9 @@ public class Project extends BaseEntity {
     @Column(length = 40)
     private String icon;
 
+    @Column(nullable = false, length = 40)
+    private String status;
+
     @Column(name = "display_order", nullable = false)
     private int displayOrder;
 
@@ -79,6 +82,7 @@ public class Project extends BaseEntity {
 
     public Project(String slug, String title, String category, String summary, String tagline,
                    String overview, String liveUrl, String githubUrl, String accent, String icon,
+                   String status,
                    int displayOrder, List<String> features, List<String> tech, List<String> images) {
         this.slug = slug;
         this.title = title;
@@ -90,6 +94,7 @@ public class Project extends BaseEntity {
         this.githubUrl = githubUrl;
         this.accent = accent;
         this.icon = icon;
+        this.status = status;
         this.displayOrder = displayOrder;
         this.features.addAll(features);
         this.tech.addAll(tech);
@@ -136,6 +141,10 @@ public class Project extends BaseEntity {
         return icon;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
     public int getDisplayOrder() {
         return displayOrder;
     }
@@ -154,6 +163,7 @@ public class Project extends BaseEntity {
 
     public void update(String slug, String title, String category, String summary, String tagline,
                        String overview, String liveUrl, String githubUrl, String accent, String icon,
+                       String status,
                        int displayOrder, List<String> features, List<String> tech, List<String> images) {
         this.slug = slug;
         this.title = title;
@@ -165,6 +175,7 @@ public class Project extends BaseEntity {
         this.githubUrl = githubUrl;
         this.accent = accent;
         this.icon = icon;
+        this.status = status;
         this.displayOrder = displayOrder;
         replace(this.features, features);
         replace(this.tech, tech);

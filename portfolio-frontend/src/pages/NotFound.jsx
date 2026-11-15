@@ -11,7 +11,14 @@ export default function NotFound({ onNavigate }) {
       <div className="nf-moon" aria-hidden="true" />
 
       {imageOk && (
-        <img className="nf-astro" src={ASTRONAUT} alt="" onError={() => setImageOk(false)} />
+        <img
+          className="nf-astro"
+          src={ASTRONAUT}
+          alt="Astronaut illustration"
+          loading="lazy"
+          decoding="async"
+          onError={() => setImageOk(false)}
+        />
       )}
 
       <div className="nf-copy">

@@ -1,5 +1,23 @@
 import { useEffect, useState, useCallback } from "react";
+import {
+  FiAward,
+  FiBookOpen,
+  FiCode,
+  FiFolder,
+  FiMail,
+  FiPlus,
+} from "react-icons/fi";
 import { apiUrl } from "../api/api";
+import {
+  ConfirmModal,
+  EmptyState,
+  StatCard,
+  Toast,
+} from "../components/AdminComponents";
+import BlogEditor from "../components/BlogEditor";
+import CertificateEditor from "../components/CertificateEditor";
+import ProjectEditor from "../components/ProjectEditor";
+import SkillEditor from "../components/SkillEditor";
 import "./AdminDashboard.css";
 const api = (path) => apiUrl(path);
 
@@ -15,6 +33,7 @@ const EMPTY_PROJECT = {
   images: "",
   accent: "",
   icon: "",
+  status: "Active",
   liveUrl: "",
   githubUrl: "",
   displayOrder: 0,
@@ -35,8 +54,9 @@ const EMPTY_EXPERIENCE = {
 };
 
 const EMPTY_SKILL_GROUP = { title: "", span: 1, displayOrder: 0 };
-const EMPTY_SKILL = { name: "", icon: "", abbr: "", displayOrder: 0 };
-const EMPTY_CERTIFICATE = { title: "", issuer: "", url: "", logoUrl: "", abbr: "", bgColor: "", fgColor: "", displayOrder: 0 };
+const EMPTY_SKILL = { name: "", icon: "", abbr: "", category: "", proficiency: "", displayOrder: 0 };
+const EMPTY_CERTIFICATE = { title: "", issuer: "", url: "", logoUrl: "", issueDate: "", abbr: "", bgColor: "", fgColor: "", displayOrder: 0 };
+const legacyEditorMode = false;
 
 export default function AdminDashboard({ onLogout }) {
   const [messages, setMessages] = useState([]);
@@ -112,6 +132,22 @@ export default function AdminDashboard({ onLogout }) {
   const [certificateForm, setCertificateForm] = useState(EMPTY_CERTIFICATE);
   const [certificateSaving, setCertificateSaving] = useState(false);
   const [certificateError, setCertificateError] = useState("");
+  const [selectedMessage, setSelectedMessage] = useState(null);
+  const [toast, setToast] = useState(null);
+  const [confirmRequest, setConfirmRequest] = useState(null);
+
+  const notify = (type, message) => {
+    setToast({ type, message });
+    window.setTimeout(() => setToast(null), 4200);
+  };
+
+  const askDelete = (title, action) => {
+    setConfirmRequest({ title, action });
+  };
+
+  const scrollToSection = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const handleUnauthorized = useCallback(() => {
     localStorage.removeItem("admin_token");
@@ -388,14 +424,18 @@ export default function AdminDashboard({ onLogout }) {
       return;
     }
 
-    fetchMessages();
-    fetchDashboardStats();
-    fetchProjects();
-    fetchBlogPosts();
-    fetchEducation();
-    fetchExperience();
-    fetchSkills();
-    fetchCertificates();
+    const loadDashboard = window.setTimeout(() => {
+      fetchMessages();
+      fetchDashboardStats();
+      fetchProjects();
+      fetchBlogPosts();
+      fetchEducation();
+      fetchExperience();
+      fetchSkills();
+      fetchCertificates();
+    }, 0);
+
+    return () => window.clearTimeout(loadDashboard);
   }, [
     fetchMessages,
     fetchDashboardStats,
@@ -429,16 +469,17 @@ export default function AdminDashboard({ onLogout }) {
       tagline: project.tagline || "",
       overview: project.overview || "",
       features: Array.isArray(project.features)
-        ? project.features.join("\n")
-        : "",
+        ? project.features
+        : [],
       tech: Array.isArray(project.tech)
-        ? project.tech.join(", ")
-        : "",
+        ? project.tech
+        : [],
       images: Array.isArray(project.images)
-        ? project.images.join("\n")
-        : "",
+        ? project.images
+        : [],
       accent: project.accent || "",
       icon: project.icon || "",
+      status: project.status || "Active",
       liveUrl: project.liveUrl || "",
       githubUrl: project.githubUrl || "",
       displayOrder: project.displayOrder ?? 0,
@@ -489,20 +530,12 @@ export default function AdminDashboard({ onLogout }) {
       summary: projectForm.summary.trim(),
       tagline: projectForm.tagline.trim() || null,
       overview: projectForm.overview.trim() || null,
-      features: projectForm.features
-        .split("\n")
-        .map((item) => item.trim())
-        .filter(Boolean),
-      tech: projectForm.tech
-        .split(",")
-        .map((item) => item.trim())
-        .filter(Boolean),
-      images: projectForm.images
-        .split("\n")
-        .map((item) => item.trim())
-        .filter(Boolean),
+      features: projectForm.features,
+      tech: projectForm.tech,
+      images: projectForm.images,
       accent: projectForm.accent.trim() || null,
       icon: projectForm.icon.trim() || null,
+      status: projectForm.status.trim() || "Active",
       liveUrl: projectForm.liveUrl.trim() || null,
       githubUrl: projectForm.githubUrl.trim() || null,
       displayOrder: Number(projectForm.displayOrder) || 0,
@@ -555,12 +588,6 @@ export default function AdminDashboard({ onLogout }) {
   // Delete Project
   // =========================
   const deleteProject = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this project?"
-    );
-
-    if (!confirmed) return;
-
     const token = localStorage.getItem("admin_token");
 
     if (!token) {
@@ -587,9 +614,10 @@ export default function AdminDashboard({ onLogout }) {
 
       await fetchProjects();
       await fetchDashboardStats();
+      notify("success", "Project deleted.");
     } catch (err) {
       console.error("Failed to delete project:", err);
-      alert("Unable to delete project.");
+      notify("error", "Unable to delete project.");
     }
   };
 
@@ -655,7 +683,7 @@ export default function AdminDashboard({ onLogout }) {
       setShowBlogForm(true);
     } catch (err) {
       console.error("Failed to load blog post:", err);
-      alert("Unable to load blog post.");
+      notify("error", "Unable to load publication.");
     }
   };
 
@@ -743,12 +771,6 @@ export default function AdminDashboard({ onLogout }) {
   };
 
   const deleteBlogPost = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this blog post?"
-    );
-
-    if (!confirmed) return;
-
     const token = localStorage.getItem("admin_token");
 
     if (!token) {
@@ -775,9 +797,10 @@ export default function AdminDashboard({ onLogout }) {
 
       await fetchBlogPosts();
       await fetchDashboardStats();
+      notify("success", "Publication deleted.");
     } catch (err) {
       console.error("Failed to delete blog post:", err);
-      alert("Unable to delete blog post.");
+      notify("error", "Unable to delete publication.");
     }
   };
 
@@ -836,7 +859,7 @@ export default function AdminDashboard({ onLogout }) {
       );
     } catch (err) {
       console.error("Failed to update message:", err);
-      alert("Unable to update message.");
+      notify("error", "Unable to update message.");
     }
   };
 
@@ -844,12 +867,6 @@ export default function AdminDashboard({ onLogout }) {
   // Delete Message
   // =========================
   const deleteMessage = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this message?"
-    );
-
-    if (!confirmed) return;
-
     const token = localStorage.getItem("admin_token");
 
     if (!token) {
@@ -879,9 +896,11 @@ export default function AdminDashboard({ onLogout }) {
       setMessages((currentMessages) =>
         currentMessages.filter((message) => message.id !== id)
       );
+      if (selectedMessage?.id === id) setSelectedMessage(null);
+      notify("success", "Message deleted.");
     } catch (err) {
       console.error("Failed to delete message:", err);
-      alert("Unable to delete message.");
+      notify("error", "Unable to delete message.");
     }
   };
 
@@ -990,12 +1009,6 @@ export default function AdminDashboard({ onLogout }) {
   };
 
   const deleteEducation = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this education entry?"
-    );
-
-    if (!confirmed) return;
-
     const token = localStorage.getItem("admin_token");
 
     if (!token) {
@@ -1021,9 +1034,10 @@ export default function AdminDashboard({ onLogout }) {
       }
 
       await fetchEducation();
+      notify("success", "Education entry deleted.");
     } catch (err) {
       console.error("Failed to delete education:", err);
-      alert("Unable to delete education entry.");
+      notify("error", "Unable to delete education entry.");
     }
   };
 
@@ -1141,12 +1155,6 @@ export default function AdminDashboard({ onLogout }) {
   };
 
   const deleteExperience = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this experience entry?"
-    );
-
-    if (!confirmed) return;
-
     const token = localStorage.getItem("admin_token");
 
     if (!token) {
@@ -1172,9 +1180,10 @@ export default function AdminDashboard({ onLogout }) {
       }
 
       await fetchExperience();
+      notify("success", "Experience entry deleted.");
     } catch (err) {
       console.error("Failed to delete experience:", err);
-      alert("Unable to delete experience entry.");
+      notify("error", "Unable to delete experience entry.");
     }
   };
 
@@ -1189,30 +1198,30 @@ export default function AdminDashboard({ onLogout }) {
     e.preventDefault(); const token=localStorage.getItem("admin_token"); if(!token){handleUnauthorized();return;} setSkillGroupSaving(true); setSkillGroupError("");
     try { const r=await fetch(editingSkillGroup?api(`/api/v1/admin/skill-groups/${editingSkillGroup.id}`):api("/api/v1/admin/skill-groups"),{method:editingSkillGroup?"PUT":"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({title:skillGroupForm.title.trim(),span:Number(skillGroupForm.span)||1,displayOrder:Number(skillGroupForm.displayOrder)||0})}); if(r.status===401||r.status===403){handleUnauthorized();return;} const d=await r.json().catch(()=>({})); if(!r.ok)throw new Error(d?.message||d?.error||"Unable to save skill group."); await fetchSkills(); closeSkillGroupForm(); } catch(e){console.error(e);setSkillGroupError(e.message||"Unable to save skill group.");} finally{setSkillGroupSaving(false);}
   };
-  const deleteSkillGroup = async (id) => { if(!window.confirm("Deleting this skill group will also delete its skills. Continue?"))return; const token=localStorage.getItem("admin_token"); if(!token){handleUnauthorized();return;} try{const r=await fetch(api(`/api/v1/admin/skill-groups/${id}`),{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchSkills();await fetchDashboardStats();}catch(e){console.error(e);alert("Unable to delete skill group.");} };
+  const deleteSkillGroup = async (id) => { const token=localStorage.getItem("admin_token"); if(!token){handleUnauthorized();return;} try{const r=await fetch(api(`/api/v1/admin/skill-groups/${id}`),{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchSkills();await fetchDashboardStats();notify("success","Skill group deleted.");}catch(e){console.error(e);notify("error","Unable to delete skill group.");} };
 
-  const openCreateSkill = (groupId) => { setEditingSkill(null); setEditingSkillGroupId(groupId); setSkillForm(EMPTY_SKILL); setSkillError(""); setShowSkillForm(true); };
-  const openEditSkill = (skill,groupId) => { setEditingSkill(skill); setEditingSkillGroupId(groupId); setSkillForm({name:skill.name||"",icon:skill.icon||"",abbr:skill.abbr||"",displayOrder:skill.displayOrder??0}); setSkillError(""); setShowSkillForm(true); };
+  const openCreateSkill = (groupId) => { setEditingSkill(null); setEditingSkillGroupId(groupId); setSkillForm({...EMPTY_SKILL, category: groupId}); setSkillError(""); setShowSkillForm(true); };
+  const openEditSkill = (skill,groupId) => { setEditingSkill(skill); setEditingSkillGroupId(groupId); setSkillForm({name:skill.name||"",icon:skill.icon||"",abbr:skill.abbr||"",category:groupId,proficiency:skill.abbr||"",displayOrder:skill.displayOrder??0}); setSkillError(""); setShowSkillForm(true); };
   const closeSkillForm = () => { if(skillSaving)return; setShowSkillForm(false); setEditingSkill(null); setEditingSkillGroupId(null); setSkillForm(EMPTY_SKILL); setSkillError(""); };
   const handleSkillChange = (e) => { const {name,value}=e.target; setSkillForm(c=>({...c,[name]:value})); };
   const saveSkill = async (e) => {
     e.preventDefault(); const token=localStorage.getItem("admin_token"); if(!token){handleUnauthorized();return;} setSkillSaving(true);setSkillError("");
-    try { const r=await fetch(editingSkill?api(`/api/v1/admin/skills/${editingSkill.id}`):api(`/api/v1/admin/skill-groups/${editingSkillGroupId}/skills`),{method:editingSkill?"PUT":"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({name:skillForm.name.trim(),icon:skillForm.icon.trim()||null,abbr:skillForm.abbr.trim()||null,displayOrder:Number(skillForm.displayOrder)||0})});if(r.status===401||r.status===403){handleUnauthorized();return;}const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d?.message||d?.error||"Unable to save skill.");await fetchSkills();await fetchDashboardStats();closeSkillForm();}catch(e){console.error(e);setSkillError(e.message||"Unable to save skill.");}finally{setSkillSaving(false);}
+    try { const groupId = Number(skillForm.category) || editingSkillGroupId; const r=await fetch(editingSkill?api(`/api/v1/admin/skills/${editingSkill.id}`):api(`/api/v1/admin/skill-groups/${groupId}/skills`),{method:editingSkill?"PUT":"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({name:skillForm.name.trim(),icon:skillForm.icon.trim()||null,abbr:(skillForm.proficiency||skillForm.abbr||"").trim()||null,displayOrder:Number(skillForm.displayOrder)||0})});if(r.status===401||r.status===403){handleUnauthorized();return;}const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d?.message||d?.error||"Unable to save skill.");await fetchSkills();await fetchDashboardStats();closeSkillForm();notify("success", editingSkill ? "Skill updated." : "Skill created.");}catch(e){console.error(e);setSkillError(e.message||"Unable to save skill.");notify("error", e.message||"Unable to save skill.");}finally{setSkillSaving(false);}
   };
-  const deleteSkill = async (id) => { if(!window.confirm("Are you sure you want to delete this skill?"))return;const token=localStorage.getItem("admin_token");if(!token){handleUnauthorized();return;}try{const r=await fetch(api(`/api/v1/admin/skills/${id}`),{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchSkills();await fetchDashboardStats();}catch(e){console.error(e);alert("Unable to delete skill.");} };
+  const deleteSkill = async (id) => { const token=localStorage.getItem("admin_token");if(!token){handleUnauthorized();return;}try{const r=await fetch(api(`/api/v1/admin/skills/${id}`),{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchSkills();await fetchDashboardStats();notify("success","Skill deleted.");}catch(e){console.error(e);notify("error","Unable to delete skill.");} };
 
   // =========================
   // Certificates CRUD
   // =========================
   const openCreateCertificate = () => { setEditingCertificate(null);setCertificateForm(EMPTY_CERTIFICATE);setCertificateError("");setShowCertificateForm(true); };
-  const openEditCertificate = (c) => { setEditingCertificate(c);setCertificateForm({title:c.title||"",issuer:c.issuer||"",url:c.url||"",logoUrl:c.logoUrl||"",abbr:c.abbr||"",bgColor:c.bgColor||"",fgColor:c.fgColor||"",displayOrder:c.displayOrder??0});setCertificateError("");setShowCertificateForm(true); };
+  const openEditCertificate = (c) => { setEditingCertificate(c);setCertificateForm({title:c.title||"",issuer:c.issuer||"",url:c.url||"",logoUrl:c.logoUrl||"",issueDate:c.issueDate||"",abbr:c.abbr||"",bgColor:c.bgColor||"",fgColor:c.fgColor||"",displayOrder:c.displayOrder??0});setCertificateError("");setShowCertificateForm(true); };
   const closeCertificateForm = () => { if(certificateSaving)return;setShowCertificateForm(false);setEditingCertificate(null);setCertificateForm(EMPTY_CERTIFICATE);setCertificateError(""); };
   const handleCertificateChange = (e) => { const {name,value}=e.target;setCertificateForm(c=>({...c,[name]:value})); };
   const saveCertificate = async (e) => {
     e.preventDefault();const token=localStorage.getItem("admin_token");if(!token){handleUnauthorized();return;}setCertificateSaving(true);setCertificateError("");
-    try{const r=await fetch(editingCertificate?api(`/api/v1/admin/certificates/${editingCertificate.id}`):api("/api/v1/admin/certificates"),{method:editingCertificate?"PUT":"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({title:certificateForm.title.trim(),issuer:certificateForm.issuer.trim(),url:certificateForm.url.trim(),logoUrl:certificateForm.logoUrl.trim()||null,abbr:certificateForm.abbr.trim()||null,bgColor:certificateForm.bgColor.trim()||null,fgColor:certificateForm.fgColor.trim()||null,displayOrder:Number(certificateForm.displayOrder)||0})});if(r.status===401||r.status===403){handleUnauthorized();return;}const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d?.message||d?.error||"Unable to save certificate.");await fetchCertificates();closeCertificateForm();}catch(e){console.error(e);setCertificateError(e.message||"Unable to save certificate.");}finally{setCertificateSaving(false);}
+    try{const r=await fetch(editingCertificate?api(`/api/v1/admin/certificates/${editingCertificate.id}`):api("/api/v1/admin/certificates"),{method:editingCertificate?"PUT":"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({title:certificateForm.title.trim(),issuer:certificateForm.issuer.trim(),url:certificateForm.url.trim(),logoUrl:certificateForm.logoUrl.trim()||null,issueDate:certificateForm.issueDate||null,abbr:certificateForm.abbr.trim()||null,bgColor:certificateForm.bgColor.trim()||null,fgColor:certificateForm.fgColor.trim()||null,displayOrder:Number(certificateForm.displayOrder)||0})});if(r.status===401||r.status===403){handleUnauthorized();return;}const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d?.message||d?.error||"Unable to save certificate.");await fetchCertificates();closeCertificateForm();notify("success", editingCertificate ? "Certificate updated." : "Certificate created.");}catch(e){console.error(e);setCertificateError(e.message||"Unable to save certificate.");notify("error", e.message||"Unable to save certificate.");}finally{setCertificateSaving(false);}
   };
-  const deleteCertificate = async (id) => {if(!window.confirm("Are you sure you want to delete this certificate?"))return;const token=localStorage.getItem("admin_token");if(!token){handleUnauthorized();return;}try{const r=await fetch(api(`/api/v1/admin/certificates/${id}`),{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchCertificates();}catch(e){console.error(e);alert("Unable to delete certificate.");}};
+  const deleteCertificate = async (id) => {const token=localStorage.getItem("admin_token");if(!token){handleUnauthorized();return;}try{const r=await fetch(api(`/api/v1/admin/certificates/${id}`),{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchCertificates();notify("success","Certificate deleted.");}catch(e){console.error(e);notify("error","Unable to delete certificate.");}};
 
   // =========================
   // Logout
@@ -1226,6 +1235,15 @@ export default function AdminDashboard({ onLogout }) {
       window.location.hash = "/admin/login";
     }
   };
+
+  const recentActivity = [
+    ...projects.map((item) => ({ id: `project-${item.id}`, label: "Project updated", title: item.title, date: item.updatedAt || item.createdAt })),
+    ...blogPosts.map((item) => ({ id: `blog-${item.id}`, label: item.published ? "Publication published" : "Publication drafted", title: item.title, date: item.updatedAt || item.createdAt })),
+    ...messages.map((item) => ({ id: `message-${item.id}`, label: "New message", title: item.name, date: item.createdAt })),
+  ]
+    .filter((item) => item.date)
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 5);
 
   return (
     <div className="admin-dashboard">
@@ -1247,34 +1265,49 @@ export default function AdminDashboard({ onLogout }) {
 
         {/* ================= STATS ================= */}
         <div className="admin-cards">
-          <div className="admin-card">
-            <span>Messages</span>
-            <strong>{messages.length}</strong>
-          </div>
-
-          <div className="admin-card">
-            <span>Projects</span>
-            <strong>{projectsCount}</strong>
-          </div>
-
-          <div className="admin-card">
-            <span>Blog Posts</span>
-            <strong>{blogPostsCount}</strong>
-          </div>
-
-          <div className="admin-card">
-            <span>Skills</span>
-            <strong>{skillsCount}</strong>
-          </div>
-
-          <div className="admin-card">
-            <span>Certificates</span>
-            <strong>{certificatesCount}</strong>
-          </div>
+          <StatCard label="Messages" value={messages.length} icon={<FiMail />} onClick={() => scrollToSection("admin-messages")} />
+          <StatCard label="Projects" value={projectsCount} icon={<FiFolder />} onClick={() => scrollToSection("admin-projects")} />
+          <StatCard label="Publications" value={blogPostsCount} icon={<FiBookOpen />} onClick={() => scrollToSection("admin-publications")} />
+          <StatCard label="Skills" value={skillsCount} icon={<FiCode />} onClick={() => scrollToSection("admin-skills")} />
+          <StatCard label="Certificates" value={certificatesCount} icon={<FiAward />} onClick={() => scrollToSection("admin-certificates")} />
         </div>
 
+        <section className="admin-quick-actions" aria-label="Quick actions">
+          <div>
+            <span className="admin-eyebrow">Workspace</span>
+            <h3>Quick actions</h3>
+            <p>Create content without leaving your dashboard.</p>
+          </div>
+          <div className="admin-action-grid">
+            <button type="button" onClick={openCreateProject}><FiPlus /> Project</button>
+            <button type="button" onClick={openCreateBlog}><FiPlus /> Publication</button>
+            <button type="button" onClick={() => openCreateSkill(skillGroups[0]?.id)}><FiPlus /> Skill</button>
+            <button type="button" onClick={openCreateCertificate}><FiPlus /> Certificate</button>
+          </div>
+        </section>
+
+        <section className="admin-activity">
+          <div>
+            <span className="admin-eyebrow">Workspace pulse</span>
+            <h3>Recent activity</h3>
+          </div>
+          {recentActivity.length ? (
+            <div className="admin-activity-list">
+              {recentActivity.map((item) => (
+                <div className="admin-activity-item" key={item.id}>
+                  <span className="admin-activity-dot" />
+                  <div><strong>{item.label}</strong><span>{item.title}</span></div>
+                  <time>{new Date(item.date).toLocaleDateString()}</time>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState title="No recent activity" description="Create or update content to see your workspace activity here." />
+          )}
+        </section>
+
         {/* ================= PROJECTS ================= */}
-        <section className="admin-messages">
+        <section className="admin-messages" id="admin-projects">
           <div className="admin-section-header">
             <div>
               <h3>Projects</h3>
@@ -1321,8 +1354,20 @@ export default function AdminDashboard({ onLogout }) {
                     </button>
 
                     <button
+                      onClick={() =>
+                        window.open(
+                          `/projects/${project.slug || project.id}`,
+                          "_blank",
+                          "noopener,noreferrer"
+                        )
+                      }
+                    >
+                      View
+                    </button>
+
+                    <button
                       className="delete-message"
-                      onClick={() => deleteProject(project.id)}
+                      onClick={() => askDelete("Delete project", () => deleteProject(project.id))}
                     >
                       Delete
                     </button>
@@ -1334,7 +1379,7 @@ export default function AdminDashboard({ onLogout }) {
         </section>
 
         {/* ================= BLOG POSTS ================= */}
-        <section className="admin-messages">
+        <section className="admin-messages" id="admin-publications">
           <div className="admin-section-header">
             <div>
               <h3>Blog Posts</h3>
@@ -1389,7 +1434,7 @@ export default function AdminDashboard({ onLogout }) {
 
                     <button
                       className="delete-message"
-                      onClick={() => deleteBlogPost(post.id)}
+                      onClick={() => askDelete("Delete publication", () => deleteBlogPost(post.id))}
                     >
                       Delete
                     </button>
@@ -1401,7 +1446,7 @@ export default function AdminDashboard({ onLogout }) {
         </section>
 
         {/* ================= EDUCATION ================= */}
-        <section className="admin-messages">
+        <section className="admin-messages" id="admin-education">
           <div className="admin-section-header">
             <div>
               <h3>Education</h3>
@@ -1446,7 +1491,7 @@ export default function AdminDashboard({ onLogout }) {
 
                     <button
                       className="delete-message"
-                      onClick={() => deleteEducation(item.id)}
+                      onClick={() => askDelete("Delete education entry", () => deleteEducation(item.id))}
                     >
                       Delete
                     </button>
@@ -1458,7 +1503,7 @@ export default function AdminDashboard({ onLogout }) {
         </section>
 
         {/* ================= EXPERIENCE ================= */}
-        <section className="admin-messages">
+        <section className="admin-messages" id="admin-experience">
           <div className="admin-section-header">
             <div>
               <h3>Experience</h3>
@@ -1508,7 +1553,7 @@ export default function AdminDashboard({ onLogout }) {
 
                     <button
                       className="delete-message"
-                      onClick={() => deleteExperience(item.id)}
+                      onClick={() => askDelete("Delete experience entry", () => deleteExperience(item.id))}
                     >
                       Delete
                     </button>
@@ -1520,31 +1565,31 @@ export default function AdminDashboard({ onLogout }) {
         </section>
 
         {/* ================= SKILLS ================= */}
-        <section className="admin-messages">
+        <section className="admin-messages" id="admin-skills">
           <div className="admin-section-header"><div><h3>Skills</h3><p>Manage skill groups and individual skills.</p></div><button className="admin-refresh" onClick={openCreateSkillGroup}>+ Add Skill Group</button></div>
           {skillsLoading && <p className="admin-state">Loading skills...</p>}
           {!skillsLoading && skillGroups.length===0 && <p className="admin-state">No skill groups found.</p>}
           {!skillsLoading && skillGroups.length>0 && <div className="admin-message-list">{skillGroups.map(group=><article className="admin-message" key={group.id}>
             <div className="admin-message-top"><div><h4>{group.title}</h4><span>Span: {group.span} • Order: #{group.displayOrder}</span></div><span className="message-status read">{Array.isArray(group.skills)?group.skills.length:0} skills</span></div>
-            {Array.isArray(group.skills)&&group.skills.length>0 ? <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:"12px",marginTop:"16px"}}>{group.skills.map(skill=><div key={skill.id} style={{padding:"14px",border:"1px solid rgba(127,127,127,.2)",borderRadius:"12px"}}><strong>{skill.name}</strong><small style={{display:"block",marginTop:"5px"}}>{skill.abbr||skill.icon||"No icon"} • #{skill.displayOrder}</small><div className="admin-message-actions"><button onClick={()=>openEditSkill(skill,group.id)}>Edit</button><button className="delete-message" onClick={()=>deleteSkill(skill.id)}>Delete</button></div></div>)}</div> : <p className="admin-state">No skills in this group.</p>}
-            <div className="admin-message-actions"><button onClick={()=>openCreateSkill(group.id)}>+ Add Skill</button><button onClick={()=>openEditSkillGroup(group)}>Edit Group</button><button className="delete-message" onClick={()=>deleteSkillGroup(group.id)}>Delete Group</button></div>
+            {Array.isArray(group.skills)&&group.skills.length>0 ? <div className="admin-skill-chip-grid">{group.skills.map(skill=><div className="admin-skill-chip" key={skill.id}><strong>{skill.name}</strong><small>{skill.abbr||skill.icon||"No level"}</small><button onClick={()=>openEditSkill(skill,group.id)} aria-label={`Edit ${skill.name}`}>Edit</button><button className="delete-message" onClick={()=>askDelete("Delete skill", () => deleteSkill(skill.id))}>Delete</button></div>)}</div> : <p className="admin-state">No skills in this group.</p>}
+            <div className="admin-message-actions"><button onClick={()=>openCreateSkill(group.id)}>+ Add Skill</button><button onClick={()=>openEditSkillGroup(group)}>Edit Group</button><button className="delete-message" onClick={()=>askDelete("Delete skill group", () => deleteSkillGroup(group.id))}>Delete Group</button></div>
           </article>)}</div>}
         </section>
 
         {/* ================= CERTIFICATES ================= */}
-        <section className="admin-messages">
+        <section className="admin-messages" id="admin-certificates">
           <div className="admin-section-header"><div><h3>Certificates</h3><p>Manage your certifications and credential links.</p></div><button className="admin-refresh" onClick={openCreateCertificate}>+ Add Certificate</button></div>
           {certificatesLoading && <p className="admin-state">Loading certificates...</p>}
           {!certificatesLoading && certificates.length===0 && <p className="admin-state">No certificates found.</p>}
-          {!certificatesLoading && certificates.length>0 && <div className="admin-message-list">{certificates.map(c=><article className="admin-message" key={c.id}>
-            <div className="admin-message-top"><div><h4>{c.title}</h4><span>{c.issuer}</span></div><span className="message-status read">#{c.displayOrder}</span></div>
-            <p>{c.abbr||"Certificate"}{c.bgColor?` • BG: ${c.bgColor}`:""}{c.fgColor?` • FG: ${c.fgColor}`:""}</p><small><a href={c.url} target="_blank" rel="noreferrer">{c.url}</a></small>
-            <div className="admin-message-actions"><button onClick={()=>openEditCertificate(c)}>Edit</button><button className="delete-message" onClick={()=>deleteCertificate(c.id)}>Delete</button></div>
+          {!certificatesLoading && certificates.length>0 && <div className="admin-message-list">{certificates.map(c=><article className="admin-message admin-certificate-card" key={c.id}>
+            {c.logoUrl ? <img src={c.logoUrl} alt="" /> : <span className="admin-certificate-icon"><FiAward aria-hidden="true" /></span>}<div><div className="admin-message-top"><div><h4>{c.title}</h4><span>{c.issuer}{c.issueDate ? ` · ${c.issueDate}` : ""}</span></div><span className="message-status read">#{c.displayOrder}</span></div>
+            <p>{c.abbr||"Certificate"}</p><small><a href={c.url} target="_blank" rel="noreferrer">Verify credential ↗</a></small></div>
+            <div className="admin-message-actions"><button onClick={()=>openEditCertificate(c)}>Edit</button><button className="delete-message" onClick={()=>askDelete("Delete certificate", () => deleteCertificate(c.id))}>Delete</button></div>
           </article>)}</div>}
         </section>
 
         {/* ================= CONTACT MESSAGES ================= */}
-        <section className="admin-messages">
+        <section className="admin-messages" id="admin-messages">
           <div className="admin-section-header">
             <div>
               <h3>Contact Messages</h3>
@@ -1575,9 +1620,10 @@ export default function AdminDashboard({ onLogout }) {
           )}
 
           {!loading && !error && messages.length > 0 && (
-            <div className="admin-message-list">
-              {messages.map((message) => (
-                <article className="admin-message" key={message.id}>
+            <div className="admin-inbox-layout">
+              <div className="admin-message-list">
+                {messages.map((message) => (
+                <article className={`admin-message ${selectedMessage?.id === message.id ? "is-selected" : ""}`} key={message.id} onClick={() => setSelectedMessage(message)}>
                   <div className="admin-message-top">
                     <div>
                       <h4>{message.name}</h4>
@@ -1614,13 +1660,37 @@ export default function AdminDashboard({ onLogout }) {
 
                     <button
                       className="delete-message"
-                      onClick={() => deleteMessage(message.id)}
+                      onClick={() => askDelete("Delete message", () => deleteMessage(message.id))}
                     >
                       Delete
                     </button>
                   </div>
                 </article>
-              ))}
+                ))}
+              </div>
+              <aside className="admin-message-detail">
+                {selectedMessage ? (
+                  <>
+                    <div className="admin-detail-heading">
+                      <div>
+                        <span className="admin-eyebrow">Message details</span>
+                        <h4>{selectedMessage.subject || "Contact message"}</h4>
+                        <p>{selectedMessage.name} · {selectedMessage.email}</p>
+                      </div>
+                      <span className={`message-status ${selectedMessage.read ? "read" : "unread"}`}>{selectedMessage.read ? "Read" : "Unread"}</span>
+                    </div>
+                    <p className="admin-detail-body">{selectedMessage.message}</p>
+                    <small>{selectedMessage.createdAt ? new Date(selectedMessage.createdAt).toLocaleString() : "No date available"}</small>
+                    <div className="admin-message-actions">
+                      <a className="admin-action-button" href={`mailto:${selectedMessage.email}?subject=Re: ${encodeURIComponent(selectedMessage.subject || "Your message")}`}>Reply via email</a>
+                      <button type="button" onClick={() => setMessageReadStatus(selectedMessage.id, !selectedMessage.read)}>{selectedMessage.read ? "Mark unread" : "Mark read"}</button>
+                      <button type="button" className="delete-message" onClick={() => askDelete("Delete message", () => deleteMessage(selectedMessage.id))}>Delete</button>
+                    </div>
+                  </>
+                ) : (
+                  <EmptyState title="Select a message" description="Choose a message from the inbox to read the full conversation." />
+                )}
+              </aside>
             </div>
           )}
         </section>
@@ -1887,231 +1957,27 @@ Worked with MySQL databases`}
       {showSkillGroupForm && <div className="admin-modal-overlay"><div className="admin-modal"><div className="admin-modal-header"><div><h3>{editingSkillGroup?"Edit Skill Group":"Add Skill Group"}</h3><p>Configure the skill group.</p></div><button type="button" className="admin-modal-close" onClick={closeSkillGroupForm} disabled={skillGroupSaving}>×</button></div><form className="admin-project-form" onSubmit={saveSkillGroup}>{skillGroupError&&<div className="admin-form-error">{skillGroupError}</div>}<div className="admin-form-grid"><div className="admin-form-group"><label>Group Title *</label><input name="title" value={skillGroupForm.title} onChange={handleSkillGroupChange} required maxLength={100} placeholder="Programming Languages"/></div><div className="admin-form-group"><label>Grid Span *</label><input type="number" name="span" value={skillGroupForm.span} onChange={handleSkillGroupChange} min="1" max="6" required/></div><div className="admin-form-group"><label>Display Order</label><input type="number" name="displayOrder" value={skillGroupForm.displayOrder} onChange={handleSkillGroupChange} min="0"/></div></div><div className="admin-form-actions"><button type="button" onClick={closeSkillGroupForm} disabled={skillGroupSaving}>Cancel</button><button type="submit" disabled={skillGroupSaving}>{skillGroupSaving?"Saving...":editingSkillGroup?"Update Group":"Create Group"}</button></div></form></div></div>}
 
       {/* ================= SKILL MODAL ================= */}
-      {showSkillForm && <div className="admin-modal-overlay"><div className="admin-modal"><div className="admin-modal-header"><div><h3>{editingSkill?"Edit Skill":"Add Skill"}</h3><p>Enter the skill details.</p></div><button type="button" className="admin-modal-close" onClick={closeSkillForm} disabled={skillSaving}>×</button></div><form className="admin-project-form" onSubmit={saveSkill}>{skillError&&<div className="admin-form-error">{skillError}</div>}<div className="admin-form-grid"><div className="admin-form-group"><label>Skill Name *</label><input name="name" value={skillForm.name} onChange={handleSkillChange} required maxLength={80} placeholder="Java"/></div><div className="admin-form-group"><label>Icon</label><input name="icon" value={skillForm.icon} onChange={handleSkillChange} maxLength={40} placeholder="java"/></div><div className="admin-form-group"><label>Abbreviation</label><input name="abbr" value={skillForm.abbr} onChange={handleSkillChange} maxLength={10} placeholder="JAVA"/></div><div className="admin-form-group"><label>Display Order</label><input type="number" name="displayOrder" value={skillForm.displayOrder} onChange={handleSkillChange} min="0"/></div></div><div className="admin-form-actions"><button type="button" onClick={closeSkillForm} disabled={skillSaving}>Cancel</button><button type="submit" disabled={skillSaving}>{skillSaving?"Saving...":editingSkill?"Update Skill":"Create Skill"}</button></div></form></div></div>}
+      {showSkillForm && legacyEditorMode && <div className="admin-modal-overlay"><div className="admin-modal"><div className="admin-modal-header"><div><h3>{editingSkill?"Edit Skill":"Add Skill"}</h3><p>Enter the skill details.</p></div><button type="button" className="admin-modal-close" onClick={closeSkillForm} disabled={skillSaving}>×</button></div><form className="admin-project-form" onSubmit={saveSkill}>{skillError&&<div className="admin-form-error">{skillError}</div>}<div className="admin-form-grid"><div className="admin-form-group"><label>Skill Name *</label><input name="name" value={skillForm.name} onChange={handleSkillChange} required maxLength={80} placeholder="Java"/></div><div className="admin-form-group"><label>Icon</label><input name="icon" value={skillForm.icon} onChange={handleSkillChange} maxLength={40} placeholder="java"/></div><div className="admin-form-group"><label>Abbreviation</label><input name="abbr" value={skillForm.abbr} onChange={handleSkillChange} maxLength={10} placeholder="JAVA"/></div><div className="admin-form-group"><label>Display Order</label><input type="number" name="displayOrder" value={skillForm.displayOrder} onChange={handleSkillChange} min="0"/></div></div><div className="admin-form-actions"><button type="button" onClick={closeSkillForm} disabled={skillSaving}>Cancel</button><button type="submit" disabled={skillSaving}>{skillSaving?"Saving...":editingSkill?"Update Skill":"Create Skill"}</button></div></form></div></div>}
 
       {/* ================= CERTIFICATE MODAL ================= */}
-      {showCertificateForm && <div className="admin-modal-overlay"><div className="admin-modal"><div className="admin-modal-header"><div><h3>{editingCertificate?"Edit Certificate":"Add Certificate"}</h3><p>Enter the certificate details.</p></div><button type="button" className="admin-modal-close" onClick={closeCertificateForm} disabled={certificateSaving}>×</button></div><form className="admin-project-form" onSubmit={saveCertificate}>{certificateError&&<div className="admin-form-error">{certificateError}</div>}<div className="admin-form-grid"><div className="admin-form-group"><label>Title *</label><input name="title" value={certificateForm.title} onChange={handleCertificateChange} required maxLength={150} placeholder="Java Programming Certificate"/></div><div className="admin-form-group"><label>Issuer *</label><input name="issuer" value={certificateForm.issuer} onChange={handleCertificateChange} required maxLength={100} placeholder="Oracle"/></div><div className="admin-form-group"><label>Certificate URL *</label><input type="url" name="url" value={certificateForm.url} onChange={handleCertificateChange} required maxLength={255} placeholder="https://example.com/certificate"/></div><div className="admin-form-group"><label>Logo URL</label><input type="url" name="logoUrl" value={certificateForm.logoUrl} onChange={handleCertificateChange} maxLength={255} placeholder="https://example.com/logo.png"/></div><div className="admin-form-group"><label>Abbreviation</label><input name="abbr" value={certificateForm.abbr} onChange={handleCertificateChange} maxLength={10} placeholder="JAVA"/></div><div className="admin-form-group"><label>Display Order</label><input type="number" name="displayOrder" value={certificateForm.displayOrder} onChange={handleCertificateChange} min="0"/></div><div className="admin-form-group"><label>Background Color</label><input name="bgColor" value={certificateForm.bgColor} onChange={handleCertificateChange} maxLength={20} placeholder="#1f2937"/></div><div className="admin-form-group"><label>Foreground Color</label><input name="fgColor" value={certificateForm.fgColor} onChange={handleCertificateChange} maxLength={20} placeholder="#ffffff"/></div></div><div className="admin-form-actions"><button type="button" onClick={closeCertificateForm} disabled={certificateSaving}>Cancel</button><button type="submit" disabled={certificateSaving}>{certificateSaving?"Saving...":editingCertificate?"Update Certificate":"Create Certificate"}</button></div></form></div></div>}
+      {showCertificateForm && legacyEditorMode && <div className="admin-modal-overlay"><div className="admin-modal"><div className="admin-modal-header"><div><h3>{editingCertificate?"Edit Certificate":"Add Certificate"}</h3><p>Enter the certificate details.</p></div><button type="button" className="admin-modal-close" onClick={closeCertificateForm} disabled={certificateSaving}>×</button></div><form className="admin-project-form" onSubmit={saveCertificate}>{certificateError&&<div className="admin-form-error">{certificateError}</div>}<div className="admin-form-grid"><div className="admin-form-group"><label>Title *</label><input name="title" value={certificateForm.title} onChange={handleCertificateChange} required maxLength={150} placeholder="Java Programming Certificate"/></div><div className="admin-form-group"><label>Issuer *</label><input name="issuer" value={certificateForm.issuer} onChange={handleCertificateChange} required maxLength={100} placeholder="Oracle"/></div><div className="admin-form-group"><label>Certificate URL *</label><input type="url" name="url" value={certificateForm.url} onChange={handleCertificateChange} required maxLength={255} placeholder="https://example.com/certificate"/></div><div className="admin-form-group"><label>Logo URL</label><input type="url" name="logoUrl" value={certificateForm.logoUrl} onChange={handleCertificateChange} maxLength={255} placeholder="https://example.com/logo.png"/></div><div className="admin-form-group"><label>Abbreviation</label><input name="abbr" value={certificateForm.abbr} onChange={handleCertificateChange} maxLength={10} placeholder="JAVA"/></div><div className="admin-form-group"><label>Display Order</label><input type="number" name="displayOrder" value={certificateForm.displayOrder} onChange={handleCertificateChange} min="0"/></div><div className="admin-form-group"><label>Background Color</label><input name="bgColor" value={certificateForm.bgColor} onChange={handleCertificateChange} maxLength={20} placeholder="#1f2937"/></div><div className="admin-form-group"><label>Foreground Color</label><input name="fgColor" value={certificateForm.fgColor} onChange={handleCertificateChange} maxLength={20} placeholder="#ffffff"/></div></div><div className="admin-form-actions"><button type="button" onClick={closeCertificateForm} disabled={certificateSaving}>Cancel</button><button type="submit" disabled={certificateSaving}>{certificateSaving?"Saving...":editingCertificate?"Update Certificate":"Create Certificate"}</button></div></form></div></div>}
 
       {/* ================= PROJECT MODAL ================= */}
       {showProjectForm && (
-        <div className="admin-modal-overlay">
-          <div className="admin-modal">
-            <div className="admin-modal-header">
-              <div>
-                <h3>{editingProject ? "Edit Project" : "Add Project"}</h3>
-                <p>Enter the project details.</p>
-              </div>
-
-              <button
-                type="button"
-                className="admin-modal-close"
-                onClick={closeProjectForm}
-                disabled={projectSaving}
-              >
-                ×
-              </button>
-            </div>
-
-            <form className="admin-project-form" onSubmit={saveProject}>
-              {projectError && (
-                <div className="admin-form-error">{projectError}</div>
-              )}
-
-              <div className="admin-form-grid">
-                <div className="admin-form-group">
-                  <label>Title *</label>
-                  <input
-                    name="title"
-                    value={projectForm.title}
-                    onChange={handleProjectChange}
-                    required
-                    maxLength={150}
-                    placeholder="Blood Donor Finder"
-                  />
-                </div>
-
-                <div className="admin-form-group">
-                  <label>Category *</label>
-                  <input
-                    name="category"
-                    value={projectForm.category}
-                    onChange={handleProjectChange}
-                    required
-                    maxLength={50}
-                    placeholder="Full Stack"
-                  />
-                </div>
-
-                <div className="admin-form-group">
-                  <label>Slug</label>
-                  <input
-                    name="slug"
-                    value={projectForm.slug}
-                    onChange={handleProjectChange}
-                    maxLength={120}
-                    placeholder="blood-donor-finder"
-                  />
-                </div>
-
-                <div className="admin-form-group">
-                  <label>Display Order</label>
-                  <input
-                    type="number"
-                    name="displayOrder"
-                    value={projectForm.displayOrder}
-                    onChange={handleProjectChange}
-                    min="0"
-                  />
-                </div>
-              </div>
-
-              <div className="admin-form-group">
-                <label>Summary *</label>
-                <textarea
-                  name="summary"
-                  value={projectForm.summary}
-                  onChange={handleProjectChange}
-                  required
-                  maxLength={500}
-                  rows={3}
-                  placeholder="Short project description..."
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label>Tagline</label>
-                <input
-                  name="tagline"
-                  value={projectForm.tagline}
-                  onChange={handleProjectChange}
-                  maxLength={255}
-                  placeholder="A short memorable project tagline"
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label>Overview</label>
-                <textarea
-                  name="overview"
-                  value={projectForm.overview}
-                  onChange={handleProjectChange}
-                  maxLength={5000}
-                  rows={5}
-                  placeholder="Detailed project overview..."
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label>Features</label>
-                <textarea
-                  name="features"
-                  value={projectForm.features}
-                  onChange={handleProjectChange}
-                  rows={6}
-                  placeholder={`One feature per line
-User Authentication
-Donor Registration
-Location Filtering`}
-                />
-                <small>Enter one feature per line.</small>
-              </div>
-
-              <div className="admin-form-group">
-                <label>Technologies</label>
-                <input
-                  name="tech"
-                  value={projectForm.tech}
-                  onChange={handleProjectChange}
-                  placeholder="React.js, Spring Boot, MySQL"
-                />
-                <small>Separate technologies with commas.</small>
-              </div>
-
-              <div className="admin-form-group">
-                <label>Project Images</label>
-                <textarea
-                  name="images"
-                  value={projectForm.images}
-                  onChange={handleProjectChange}
-                  rows={4}
-                  placeholder={`/projects/project-1.png
-/projects/project-2.png`}
-                />
-                <small>Enter one image URL per line.</small>
-              </div>
-
-              <div className="admin-form-grid">
-                <div className="admin-form-group">
-                  <label>Live URL</label>
-                  <input
-                    type="url"
-                    name="liveUrl"
-                    value={projectForm.liveUrl}
-                    onChange={handleProjectChange}
-                    placeholder="https://example.com"
-                  />
-                </div>
-
-                <div className="admin-form-group">
-                  <label>GitHub URL</label>
-                  <input
-                    type="url"
-                    name="githubUrl"
-                    value={projectForm.githubUrl}
-                    onChange={handleProjectChange}
-                    placeholder="https://github.com/username/project"
-                  />
-                </div>
-              </div>
-
-              <div className="admin-form-grid">
-                <div className="admin-form-group">
-                  <label>Icon</label>
-                  <input
-                    name="icon"
-                    value={projectForm.icon}
-                    onChange={handleProjectChange}
-                    maxLength={40}
-                    placeholder="heart"
-                  />
-                </div>
-
-                <div className="admin-form-group">
-                  <label>Accent</label>
-                  <input
-                    name="accent"
-                    value={projectForm.accent}
-                    onChange={handleProjectChange}
-                    maxLength={255}
-                    placeholder="linear-gradient(...)"
-                  />
-                </div>
-              </div>
-
-              <div className="admin-form-actions">
-                <button
-                  type="button"
-                  onClick={closeProjectForm}
-                  disabled={projectSaving}
-                >
-                  Cancel
-                </button>
-
-                <button type="submit" disabled={projectSaving}>
-                  {projectSaving
-                    ? "Saving..."
-                    : editingProject
-                    ? "Update Project"
-                    : "Create Project"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <ProjectEditor
+          editingProject={editingProject}
+          projectForm={projectForm}
+          onChange={handleProjectChange}
+          onSubmit={saveProject}
+          onClose={closeProjectForm}
+          saving={projectSaving}
+          error={projectError}
+          onUnauthorized={handleUnauthorized}
+        />
       )}
 
       {/* ================= BLOG MODAL ================= */}
-      {showBlogForm && (
+      {showBlogForm && legacyEditorMode && (
         <div className="admin-modal-overlay">
           <div className="admin-modal">
             <div className="admin-modal-header">
@@ -2261,6 +2127,57 @@ Location Filtering`}
             </form>
           </div>
         </div>
+      )}
+
+      {showBlogForm && (
+        <BlogEditor
+          editing={editingBlogPost}
+          form={blogForm}
+          onChange={handleBlogChange}
+          onSubmit={saveBlogPost}
+          onClose={closeBlogForm}
+          saving={blogSaving}
+          error={blogError}
+        />
+      )}
+
+      {showSkillForm && (
+        <SkillEditor
+          editing={editingSkill}
+          form={skillForm}
+          groups={skillGroups}
+          onChange={handleSkillChange}
+          onSubmit={saveSkill}
+          onClose={closeSkillForm}
+          saving={skillSaving}
+          error={skillError}
+        />
+      )}
+
+      {showCertificateForm && (
+        <CertificateEditor
+          editing={editingCertificate}
+          form={certificateForm}
+          onChange={handleCertificateChange}
+          onSubmit={saveCertificate}
+          onClose={closeCertificateForm}
+          saving={certificateSaving}
+          error={certificateError}
+        />
+      )}
+
+      <Toast toast={toast} onClose={() => setToast(null)} />
+      {confirmRequest && (
+        <ConfirmModal
+          title={confirmRequest.title}
+          message="This action cannot be undone. Are you sure you want to continue?"
+          onClose={() => setConfirmRequest(null)}
+          onConfirm={async () => {
+            const action = confirmRequest.action;
+            setConfirmRequest(null);
+            await action();
+          }}
+        />
       )}
     </div>
   );

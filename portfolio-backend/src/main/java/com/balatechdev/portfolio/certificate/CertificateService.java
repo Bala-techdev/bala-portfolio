@@ -33,6 +33,7 @@ public class CertificateService {
         Certificate entity = new Certificate(
                 request.title(),
                 request.issuer(),
+                request.issueDate(),
                 request.url(),
                 request.logoUrl(),
                 request.abbr(),
@@ -48,6 +49,7 @@ public class CertificateService {
         entity.update(
                 request.title(),
                 request.issuer(),
+                request.issueDate(),
                 request.url(),
                 request.logoUrl(),
                 request.abbr(),

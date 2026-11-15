@@ -5,7 +5,7 @@ import "./Experience.css";
 const PHOTO = "/experience.jpg";
 const QUOTE = "Every Experience Adds a New Piece to My Story.";
 
-function Logo({ src, initials }) {
+function Logo({ src, initials, alt }) {
   const [failed, setFailed] = useState(!src);
 
   return (
@@ -13,14 +13,20 @@ function Logo({ src, initials }) {
       {failed ? (
         <span aria-hidden="true">{initials}</span>
       ) : (
-        <img src={src} alt="" onError={() => setFailed(true)} />
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          decoding="async"
+          onError={() => setFailed(true)}
+        />
       )}
     </div>
   );
 }
 
 export default function Experience() {
-  const { portfolio, loading, error } = usePortfolio();
+  const { portfolio } = usePortfolio();
 
   const experience = portfolio.experience;
 
@@ -35,12 +41,7 @@ export default function Experience() {
             My professional journey and internships.
           </p>
 
-          {loading && <p>Loading experience...</p>}
-
-          {error && <p>{error}</p>}
-
-          {!loading && !error && (
-            <ol className="ex-timeline">
+          <ol className="ex-timeline">
               {experience.map((item) => (
                 <li className="ex-item" key={item.id}>
                   <article className="ex-card">
@@ -61,12 +62,12 @@ export default function Experience() {
                     <Logo
                       src={item.logoUrl}
                       initials={item.initials}
+                      alt={`${item.title} logo`}
                     />
                   </article>
                 </li>
               ))}
-            </ol>
-          )}
+          </ol>
         </div>
 
         <aside className="ex-side">
@@ -74,7 +75,9 @@ export default function Experience() {
             <img
               className="ex-photo"
               src={PHOTO}
-              alt=""
+              alt="Bala S working on software development"
+              loading="lazy"
+              decoding="async"
               onError={() => setPhotoOk(false)}
             />
           ) : (

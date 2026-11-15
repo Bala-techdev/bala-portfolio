@@ -38,7 +38,7 @@ import com.nimbusds.jose.jwk.source.ImmutableSecret;
 
 @Configuration
 @EnableWebSecurity
-@EnableConfigurationProperties(JwtProperties.class)
+@EnableConfigurationProperties({JwtProperties.class, CloudinaryProperties.class})
 public class SecurityConfig {
 
     private final JwtProperties jwtProperties;
@@ -216,6 +216,12 @@ public class SecurityConfig {
                                 // Explicitly allow the Render keep-alive ping endpoint first
                                 .requestMatchers(
                                         "/api/v1/ping"
+                                )
+                                .permitAll()
+
+                                .requestMatchers(
+                                        org.springframework.http.HttpMethod.GET,
+                                        "/api/health"
                                 )
                                 .permitAll()
 

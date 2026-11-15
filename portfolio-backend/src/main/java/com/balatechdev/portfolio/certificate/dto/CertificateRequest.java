@@ -3,6 +3,7 @@ package com.balatechdev.portfolio.certificate.dto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDate;
 import org.hibernate.validator.constraints.URL;
 
 public record CertificateRequest(
@@ -13,6 +14,8 @@ public record CertificateRequest(
         @NotBlank(message = "Issuer is required")
         @Size(max = 100, message = "Issuer must be at most 100 characters")
         String issuer,
+
+        LocalDate issueDate,
 
         @NotBlank(message = "URL is required")
         @URL(message = "URL must be a valid http(s) address")
@@ -33,4 +36,16 @@ public record CertificateRequest(
 
         @Min(value = 0, message = "Display order must be 0 or greater")
         Integer displayOrder) {
+
+    public CertificateRequest(
+            String title,
+            String issuer,
+            String url,
+            String logoUrl,
+            String abbr,
+            String bgColor,
+            String fgColor,
+            Integer displayOrder) {
+        this(title, issuer, null, url, logoUrl, abbr, bgColor, fgColor, displayOrder);
+    }
 }

@@ -5,7 +5,7 @@ export const CATEGORIES = ["All", "Full Stack", "AI/ML", "Web Apps", "Java", "Ot
 export const projects = [
   {
     id: "blood-donor-finder",
-    title: "Blood Donor Finder",
+    title: "AI-Based Blood Donor Matching System",
     category: "Full Stack",
     summary:
       "A platform to connect blood donors with those in need. Real-time search, location filtering, and notifications.",
@@ -28,15 +28,15 @@ export const projects = [
     ],
     accent: "linear-gradient(135deg, #e5484d 0%, #a51111 100%)",
     icon: "heart",
-    liveUrl: "https://example.com",
-    githubUrl: "https://github.com/your-username/blood-donor-finder",
+    liveUrl: null,
+    githubUrl: null,
   },
   {
     id: "ai-phishing-url-detection",
     title: "AI Phishing URL Detection",
     category: "AI/ML",
     summary:
-      "Machine learning model to detect phishing URLs with high accuracy and real-time analysis dashboard.",
+      "Machine learning workflow to detect potentially malicious URLs with a real-time analysis dashboard.",
     tagline: "A machine learning tool that flags phishing links in real time.",
     overview:
       "This project analyses URL features and uses a trained classifier to decide whether a link is safe or a phishing attempt. A simple dashboard shows results and model performance.",
@@ -45,7 +45,6 @@ export const projects = [
       "ML Classification Model",
       "Real-time URL Checking",
       "Analytics Dashboard",
-      "Model Accuracy Report",
       "REST API Support",
     ],
     tech: ["Python", "Scikit-learn", "Flask", "React.js"],
@@ -56,8 +55,8 @@ export const projects = [
     ],
     accent: "linear-gradient(135deg, #171b26 0%, #0b0d14 100%)",
     icon: "shield",
-    liveUrl: "https://example.com",
-    githubUrl: "https://github.com/your-username/phishing-url-detection",
+    liveUrl: null,
+    githubUrl: null,
   },
   {
     id: "notes-taking-application",
@@ -84,7 +83,7 @@ export const projects = [
     ],
     accent: "linear-gradient(135deg, #4c6fff 0%, #22308f 100%)",
     icon: "edit",
-    liveUrl: "https://example.com",
-    githubUrl: "https://github.com/your-username/notes-app",
+    liveUrl: null,
+    githubUrl: null,
   },
 ];

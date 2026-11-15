@@ -22,6 +22,13 @@ export default function ProjectImage({ src, alt, accent, icon }) {
   }
 
   return (
-    <img className="pi" src={src} alt={alt} loading="lazy" onError={() => setFailed(true)} />
+    <img
+      className="pi"
+      src={src}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      onError={() => setFailed(true)}
+    />
   );
 }

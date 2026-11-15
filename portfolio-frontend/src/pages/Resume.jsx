@@ -45,6 +45,8 @@ export default function Resume() {
               className="rs-img"
               src={PREVIEW}
               alt={`Preview of ${NAME}'s resume`}
+              loading="lazy"
+              decoding="async"
               onError={() => setPreviewOk(false)}
             />
           ) : (

@@ -16,6 +16,7 @@ public record ProjectResponse(
         List<String> images,
         String accent,
         String icon,
+        String status,
         String liveUrl,
         String githubUrl,
         int displayOrder,
