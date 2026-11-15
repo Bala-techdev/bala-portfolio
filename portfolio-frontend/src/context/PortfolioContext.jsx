@@ -1,5 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { apiUrl } from "../api/api";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { fetchPortfolio } from "../api/portfolioApi";
 import { fallbackPortfolio } from "../data/portfolioData";
 
 const PortfolioContext = createContext(null);
@@ -52,7 +57,7 @@ function normalizeBlog(value) {
 }
 
 function mergeCollection(fallback, live) {
-  if (!Array.isArray(live) || live.length === 0) {
+  if (!Array.isArray(live)) {
     return fallback;
   }
 
@@ -60,7 +65,7 @@ function mergeCollection(fallback, live) {
 }
 
 function mergeProjects(fallback, live) {
-  if (!Array.isArray(live) || live.length === 0) {
+  if (!Array.isArray(live)) {
     return fallback;
   }
 
@@ -73,19 +78,17 @@ function mergeProjects(fallback, live) {
       ])
   );
 
-  const mergedFallback = fallback.map((item) => {
-    const key = String(item.slug ?? item.id ?? "");
-    const liveItem = liveByKey.get(key);
-
-    if (!liveItem) {
-      return item;
-    }
-
-    liveByKey.delete(key);
-    return { ...item, ...liveItem };
-  });
-
-  return [...mergedFallback, ...liveByKey.values()];
+  return live
+    .filter((item) => item && typeof item === "object")
+    .map((item) => {
+      const key = String(item.slug ?? item.id ?? "");
+      const fallbackItem = fallback.find(
+        (candidate) =>
+          String(candidate.slug ?? candidate.id ?? "") === key
+      );
+      liveByKey.delete(key);
+      return fallbackItem ? { ...fallbackItem, ...item } : item;
+    });
 }
 
 function normalizeLivePortfolio(data) {
@@ -135,7 +138,10 @@ function mergePortfolio(liveData) {
       fallbackPortfolio.publications,
       liveData.blog
     ),
-    research: fallbackPortfolio.research,
+    research: mergeCollection(
+      fallbackPortfolio.research,
+      liveData.blog
+    ),
   };
 }
 
@@ -144,20 +150,6 @@ function cachePortfolio(portfolio) {
     sessionStorage.setItem(CACHE_KEY, JSON.stringify(portfolio));
   } catch (error) {
     console.warn("Portfolio cache could not be saved:", error);
-  }
-}
-
-async function fetchWithTimeout(url, timeoutMs) {
-  const controller = new AbortController();
-  const timeoutId = window.setTimeout(
-    () => controller.abort(),
-    timeoutMs
-  );
-
-  try {
-    return await fetch(url, { signal: controller.signal });
-  } finally {
-    window.clearTimeout(timeoutId);
   }
 }
 
@@ -174,22 +166,28 @@ export function PortfolioProvider({ children }) {
 
   useEffect(() => {
     let cancelled = false;
+    let activeController = null;
 
     const loadPortfolioData = async () => {
+      activeController?.abort();
+      activeController = new AbortController();
       try {
         setError("");
         setSyncError("");
 
-        const response = await fetchWithTimeout(
-          apiUrl("/api/v1/portfolio"),
+        const timeoutId = window.setTimeout(
+          () => activeController.abort(),
           REQUEST_TIMEOUT_MS
         );
 
-        if (!response.ok) {
-          throw new Error(`Portfolio API returned HTTP ${response.status}`);
+        let data;
+        try {
+          data = await fetchPortfolio({
+            signal: activeController.signal,
+          });
+        } finally {
+          window.clearTimeout(timeoutId);
         }
-
-        const data = await response.json();
         const liveData = normalizeLivePortfolio(data);
         const mergedPortfolio = mergePortfolio(liveData);
 
@@ -213,10 +211,30 @@ export function PortfolioProvider({ children }) {
       }
     };
 
+    const handlePortfolioChanged = () => {
+      loadPortfolioData();
+    };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        loadPortfolioData();
+      }
+    };
+
+    window.addEventListener("portfolio:changed", handlePortfolioChanged);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
     loadPortfolioData();
 
     return () => {
       cancelled = true;
+      activeController?.abort();
+      window.removeEventListener(
+        "portfolio:changed",
+        handlePortfolioChanged
+      );
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibilityChange
+      );
     };
   }, []);
 

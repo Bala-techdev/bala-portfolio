@@ -20,6 +20,9 @@ import ProjectEditor from "../components/ProjectEditor";
 import SkillEditor from "../components/SkillEditor";
 import "./AdminDashboard.css";
 const api = (path) => apiUrl(path);
+const dispatchPortfolioChanged = () => {
+  window.dispatchEvent(new Event("portfolio:changed"));
+};
 
 const EMPTY_PROJECT = {
   slug: "",
@@ -574,6 +577,7 @@ export default function AdminDashboard({ onLogout }) {
 
       await fetchProjects();
       await fetchDashboardStats();
+      dispatchPortfolioChanged();
 
       closeProjectForm();
     } catch (err) {
@@ -614,6 +618,7 @@ export default function AdminDashboard({ onLogout }) {
 
       await fetchProjects();
       await fetchDashboardStats();
+      dispatchPortfolioChanged();
       notify("success", "Project deleted.");
     } catch (err) {
       console.error("Failed to delete project:", err);
@@ -760,6 +765,7 @@ export default function AdminDashboard({ onLogout }) {
 
       await fetchBlogPosts();
       await fetchDashboardStats();
+      dispatchPortfolioChanged();
 
       closeBlogForm();
     } catch (err) {
@@ -797,6 +803,7 @@ export default function AdminDashboard({ onLogout }) {
 
       await fetchBlogPosts();
       await fetchDashboardStats();
+      dispatchPortfolioChanged();
       notify("success", "Publication deleted.");
     } catch (err) {
       console.error("Failed to delete blog post:", err);
@@ -999,6 +1006,7 @@ export default function AdminDashboard({ onLogout }) {
       }
 
       await fetchEducation();
+      dispatchPortfolioChanged();
       closeEducationForm();
     } catch (err) {
       console.error("Failed to save education:", err);
@@ -1034,6 +1042,7 @@ export default function AdminDashboard({ onLogout }) {
       }
 
       await fetchEducation();
+      dispatchPortfolioChanged();
       notify("success", "Education entry deleted.");
     } catch (err) {
       console.error("Failed to delete education:", err);
@@ -1145,6 +1154,7 @@ export default function AdminDashboard({ onLogout }) {
       }
 
       await fetchExperience();
+      dispatchPortfolioChanged();
       closeExperienceForm();
     } catch (err) {
       console.error("Failed to save experience:", err);
@@ -1180,6 +1190,7 @@ export default function AdminDashboard({ onLogout }) {
       }
 
       await fetchExperience();
+      dispatchPortfolioChanged();
       notify("success", "Experience entry deleted.");
     } catch (err) {
       console.error("Failed to delete experience:", err);
@@ -1196,9 +1207,9 @@ export default function AdminDashboard({ onLogout }) {
   const handleSkillGroupChange = (e) => { const {name,value}=e.target; setSkillGroupForm(c=>({...c,[name]:value})); };
   const saveSkillGroup = async (e) => {
     e.preventDefault(); const token=localStorage.getItem("admin_token"); if(!token){handleUnauthorized();return;} setSkillGroupSaving(true); setSkillGroupError("");
-    try { const r=await fetch(editingSkillGroup?api(`/api/v1/admin/skill-groups/${editingSkillGroup.id}`):api("/api/v1/admin/skill-groups"),{method:editingSkillGroup?"PUT":"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({title:skillGroupForm.title.trim(),span:Number(skillGroupForm.span)||1,displayOrder:Number(skillGroupForm.displayOrder)||0})}); if(r.status===401||r.status===403){handleUnauthorized();return;} const d=await r.json().catch(()=>({})); if(!r.ok)throw new Error(d?.message||d?.error||"Unable to save skill group."); await fetchSkills(); closeSkillGroupForm(); } catch(e){console.error(e);setSkillGroupError(e.message||"Unable to save skill group.");} finally{setSkillGroupSaving(false);}
+    try { const r=await fetch(editingSkillGroup?api(`/api/v1/admin/skill-groups/${editingSkillGroup.id}`):api("/api/v1/admin/skill-groups"),{method:editingSkillGroup?"PUT":"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({title:skillGroupForm.title.trim(),span:Number(skillGroupForm.span)||1,displayOrder:Number(skillGroupForm.displayOrder)||0})}); if(r.status===401||r.status===403){handleUnauthorized();return;} const d=await r.json().catch(()=>({})); if(!r.ok)throw new Error(d?.message||d?.error||"Unable to save skill group."); await fetchSkills(); dispatchPortfolioChanged(); closeSkillGroupForm(); } catch(e){console.error(e);setSkillGroupError(e.message||"Unable to save skill group.");} finally{setSkillGroupSaving(false);}
   };
-  const deleteSkillGroup = async (id) => { const token=localStorage.getItem("admin_token"); if(!token){handleUnauthorized();return;} try{const r=await fetch(api(`/api/v1/admin/skill-groups/${id}`),{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchSkills();await fetchDashboardStats();notify("success","Skill group deleted.");}catch(e){console.error(e);notify("error","Unable to delete skill group.");} };
+  const deleteSkillGroup = async (id) => { const token=localStorage.getItem("admin_token"); if(!token){handleUnauthorized();return;} try{const r=await fetch(api(`/api/v1/admin/skill-groups/${id}`),{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchSkills();await fetchDashboardStats();dispatchPortfolioChanged();notify("success","Skill group deleted.");}catch(e){console.error(e);notify("error","Unable to delete skill group.");} };
 
   const openCreateSkill = (groupId) => { setEditingSkill(null); setEditingSkillGroupId(groupId); setSkillForm({...EMPTY_SKILL, category: groupId}); setSkillError(""); setShowSkillForm(true); };
   const openEditSkill = (skill,groupId) => { setEditingSkill(skill); setEditingSkillGroupId(groupId); setSkillForm({name:skill.name||"",icon:skill.icon||"",abbr:skill.abbr||"",category:groupId,proficiency:skill.abbr||"",displayOrder:skill.displayOrder??0}); setSkillError(""); setShowSkillForm(true); };
@@ -1206,9 +1217,9 @@ export default function AdminDashboard({ onLogout }) {
   const handleSkillChange = (e) => { const {name,value}=e.target; setSkillForm(c=>({...c,[name]:value})); };
   const saveSkill = async (e) => {
     e.preventDefault(); const token=localStorage.getItem("admin_token"); if(!token){handleUnauthorized();return;} setSkillSaving(true);setSkillError("");
-    try { const groupId = Number(skillForm.category) || editingSkillGroupId; const r=await fetch(editingSkill?api(`/api/v1/admin/skills/${editingSkill.id}`):api(`/api/v1/admin/skill-groups/${groupId}/skills`),{method:editingSkill?"PUT":"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({name:skillForm.name.trim(),icon:skillForm.icon.trim()||null,abbr:(skillForm.proficiency||skillForm.abbr||"").trim()||null,displayOrder:Number(skillForm.displayOrder)||0})});if(r.status===401||r.status===403){handleUnauthorized();return;}const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d?.message||d?.error||"Unable to save skill.");await fetchSkills();await fetchDashboardStats();closeSkillForm();notify("success", editingSkill ? "Skill updated." : "Skill created.");}catch(e){console.error(e);setSkillError(e.message||"Unable to save skill.");notify("error", e.message||"Unable to save skill.");}finally{setSkillSaving(false);}
+    try { const groupId = Number(skillForm.category) || editingSkillGroupId; const r=await fetch(editingSkill?api(`/api/v1/admin/skills/${editingSkill.id}`):api(`/api/v1/admin/skill-groups/${groupId}/skills`),{method:editingSkill?"PUT":"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({name:skillForm.name.trim(),icon:skillForm.icon.trim()||null,abbr:(skillForm.proficiency||skillForm.abbr||"").trim()||null,displayOrder:Number(skillForm.displayOrder)||0})});if(r.status===401||r.status===403){handleUnauthorized();return;}const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d?.message||d?.error||"Unable to save skill.");await fetchSkills();await fetchDashboardStats();dispatchPortfolioChanged();closeSkillForm();notify("success", editingSkill ? "Skill updated." : "Skill created.");}catch(e){console.error(e);setSkillError(e.message||"Unable to save skill.");notify("error", e.message||"Unable to save skill.");}finally{setSkillSaving(false);}
   };
-  const deleteSkill = async (id) => { const token=localStorage.getItem("admin_token");if(!token){handleUnauthorized();return;}try{const r=await fetch(api(`/api/v1/admin/skills/${id}`),{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchSkills();await fetchDashboardStats();notify("success","Skill deleted.");}catch(e){console.error(e);notify("error","Unable to delete skill.");} };
+  const deleteSkill = async (id) => { const token=localStorage.getItem("admin_token");if(!token){handleUnauthorized();return;}try{const r=await fetch(api(`/api/v1/admin/skills/${id}`),{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchSkills();await fetchDashboardStats();dispatchPortfolioChanged();notify("success","Skill deleted.");}catch(e){console.error(e);notify("error","Unable to delete skill.");} };
 
   // =========================
   // Certificates CRUD
@@ -1219,9 +1230,9 @@ export default function AdminDashboard({ onLogout }) {
   const handleCertificateChange = (e) => { const {name,value}=e.target;setCertificateForm(c=>({...c,[name]:value})); };
   const saveCertificate = async (e) => {
     e.preventDefault();const token=localStorage.getItem("admin_token");if(!token){handleUnauthorized();return;}setCertificateSaving(true);setCertificateError("");
-    try{const r=await fetch(editingCertificate?api(`/api/v1/admin/certificates/${editingCertificate.id}`):api("/api/v1/admin/certificates"),{method:editingCertificate?"PUT":"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({title:certificateForm.title.trim(),issuer:certificateForm.issuer.trim(),url:certificateForm.url.trim(),logoUrl:certificateForm.logoUrl.trim()||null,issueDate:certificateForm.issueDate||null,abbr:certificateForm.abbr.trim()||null,bgColor:certificateForm.bgColor.trim()||null,fgColor:certificateForm.fgColor.trim()||null,displayOrder:Number(certificateForm.displayOrder)||0})});if(r.status===401||r.status===403){handleUnauthorized();return;}const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d?.message||d?.error||"Unable to save certificate.");await fetchCertificates();closeCertificateForm();notify("success", editingCertificate ? "Certificate updated." : "Certificate created.");}catch(e){console.error(e);setCertificateError(e.message||"Unable to save certificate.");notify("error", e.message||"Unable to save certificate.");}finally{setCertificateSaving(false);}
+    try{const r=await fetch(editingCertificate?api(`/api/v1/admin/certificates/${editingCertificate.id}`):api("/api/v1/admin/certificates"),{method:editingCertificate?"PUT":"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({title:certificateForm.title.trim(),issuer:certificateForm.issuer.trim(),url:certificateForm.url.trim(),logoUrl:certificateForm.logoUrl.trim()||null,issueDate:certificateForm.issueDate||null,abbr:certificateForm.abbr.trim()||null,bgColor:certificateForm.bgColor.trim()||null,fgColor:certificateForm.fgColor.trim()||null,displayOrder:Number(certificateForm.displayOrder)||0})});if(r.status===401||r.status===403){handleUnauthorized();return;}const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d?.message||d?.error||"Unable to save certificate.");await fetchCertificates();dispatchPortfolioChanged();closeCertificateForm();notify("success", editingCertificate ? "Certificate updated." : "Certificate created.");}catch(e){console.error(e);setCertificateError(e.message||"Unable to save certificate.");notify("error", e.message||"Unable to save certificate.");}finally{setCertificateSaving(false);}
   };
-  const deleteCertificate = async (id) => {const token=localStorage.getItem("admin_token");if(!token){handleUnauthorized();return;}try{const r=await fetch(api(`/api/v1/admin/certificates/${id}`),{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchCertificates();notify("success","Certificate deleted.");}catch(e){console.error(e);notify("error","Unable to delete certificate.");}};
+  const deleteCertificate = async (id) => {const token=localStorage.getItem("admin_token");if(!token){handleUnauthorized();return;}try{const r=await fetch(api(`/api/v1/admin/certificates/${id}`),{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});if(r.status===401||r.status===403){handleUnauthorized();return;}if(!r.ok)throw new Error(`HTTP ${r.status}`);await fetchCertificates();dispatchPortfolioChanged();notify("success","Certificate deleted.");}catch(e){console.error(e);notify("error","Unable to delete certificate.");}};
 
   // =========================
   // Logout
