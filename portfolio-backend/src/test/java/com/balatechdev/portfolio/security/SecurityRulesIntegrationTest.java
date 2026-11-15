@@ -1,7 +1,9 @@
 package com.balatechdev.portfolio.security;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -61,7 +63,8 @@ class SecurityRulesIntegrationTest {
                 "/api/v1/certificates",
                 "/api/v1/skills",
                 "/api/v1/projects",
-                "/api/v1/blog");
+                "/api/v1/blog",
+                "/api/v1/portfolio");
     }
 
     @ParameterizedTest
@@ -105,6 +108,53 @@ class SecurityRulesIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void optionsPreflight_fromProductionFrontend_isAllowed() throws Exception {
+        mockMvc.perform(options("/api/v1/portfolio")
+                        .header("Origin", "https://bala-portfolio-teal.vercel.app")
+                        .header("Access-Control-Request-Method", "GET"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Access-Control-Allow-Origin", "https://bala-portfolio-teal.vercel.app"))
+                .andExpect(header().string("Access-Control-Allow-Credentials", "true"));
+    }
+
+    @Test
+    void optionsPreflight_fromVercelPreview_isAllowed() throws Exception {
+        mockMvc.perform(options("/api/v1/portfolio")
+                        .header("Origin", "https://bala-portfolio-29cf1bfln-bala-tech1.vercel.app")
+                        .header("Access-Control-Request-Method", "GET"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Access-Control-Allow-Origin", "https://bala-portfolio-29cf1bfln-bala-tech1.vercel.app"))
+                .andExpect(header().string("Access-Control-Allow-Credentials", "true"));
+    }
+
+    @Test
+    void optionsPreflight_fromLocalhost_isAllowed() throws Exception {
+        mockMvc.perform(options("/api/v1/portfolio")
+                        .header("Origin", "http://localhost:5173")
+                        .header("Access-Control-Request-Method", "GET"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:5173"))
+                .andExpect(header().string("Access-Control-Allow-Credentials", "true"));
+    }
+
+    @Test
+    void getPortfolio_fromVercelPreview_returns200AndCorsHeader() throws Exception {
+        mockMvc.perform(get("/api/v1/portfolio")
+                        .header("Origin", "https://bala-portfolio-29cf1bfln-bala-tech1.vercel.app"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Access-Control-Allow-Origin", "https://bala-portfolio-29cf1bfln-bala-tech1.vercel.app"))
+                .andExpect(header().string("Access-Control-Allow-Credentials", "true"));
+    }
+
+    @Test
+    void cors_untrustedOrigin_isRejectedWith403() throws Exception {
+        mockMvc.perform(get("/api/v1/portfolio")
+                        .header("Origin", "https://malicious-website.com"))
+                .andExpect(status().isForbidden())
+                .andExpect(header().doesNotExist("Access-Control-Allow-Origin"));
     }
 
     // Mints a syntactically valid JWT with a role other than ADMIN, to prove the API
